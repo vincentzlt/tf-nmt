@@ -21,7 +21,7 @@ else
 fi
 
 
-CUDA_VISIBLE_DEVICES=1 python -m nmt.nmt \
+CUDA_VISIBLE_DEVICES=2 python -m nmt.nmt \
     --src=source \
     --tgt=target \
     --share_vocab=${SHARE_VOCAB} \
