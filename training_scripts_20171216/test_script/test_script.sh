@@ -21,14 +21,14 @@ else
 fi
 
 
-python -m nmt.nmt \
-    --src=jp \
-    --tgt=cn \
+CUDA_VISIBLE_DEVICES=1 python -m nmt.nmt \
+    --src=source \
+    --tgt=target \
     --share_vocab=${SHARE_VOCAB} \
-    --vocab_prefix=${DATA_ROOT}/train/${SHARE_VOCAB_DIR}/vocab \
-    --train_prefix=${DATA_ROOT}/${DATA_SPLIT}/train \
-    --dev_prefix=${DATA_ROOT}/${DATA_SPLIT}/dev \
-    --test_prefix=${DATA_ROOT}/${DATA_SPLIT}/test \
+    --vocab_prefix=${DATA_ROOT}/train/vocab \
+    --train_prefix=${DATA_ROOT}/train/data \
+    --dev_prefix=${DATA_ROOT}/dev/data \
+    --test_prefix=${DATA_ROOT}/test/data \
     --out_dir=${MODEL_ROOT}/${MODEL} \
     --hparams_path=/clwork/vincentzlt/tf-nmt/nmt/standard_hparams/wmt16-batch64.json \
     --override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_`date "+%Y-%m-%d_%H_%M_%S"`
