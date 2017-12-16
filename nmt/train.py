@@ -328,7 +328,7 @@ def train(hparams, scope=None, target_session=""):
 
         # create dir for saving the checkpoints
         if not os.path.exists(os.path.join(out_dir, 'checkpoints')):
-            os.mkdir(s.path.join(out_dir, 'checkpoints'))
+            os.mkdir(os.path.join(out_dir, 'checkpoints'))
 
         # Once in a while, we print statistics.
         if global_step - last_stats_step >= steps_per_stats:
