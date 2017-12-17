@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-
 """Utility for evaluating various tasks, e.g., translation & summarization."""
 import codecs
 import os
@@ -32,23 +31,23 @@ import pdb
 
 __all__ = ["evaluate"]
 
-if 'comp_dict' not in locals():
-    current_dir = os.path.dirname(__file__)
-    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-    comp_dict = pickle.load(open(dict_file, 'rb'))
-if 'comp_dict' not in locals():
-    current_dir = os.path.dirname(__file__)
-    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-    stroke_dict = pickle.load(open(dict_file, 'rb'))
+# if 'comp_dict' not in locals():
+#     current_dir = os.path.dirname(__file__)
+#     dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+#     comp_dict = pickle.load(open(dict_file, 'rb'))
+# if 'comp_dict' not in locals():
+#     current_dir = os.path.dirname(__file__)
+#     dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+#     stroke_dict = pickle.load(open(dict_file, 'rb'))
 
-opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
-opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
-if 'mk_cn' not in locals():
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-if 'mk_jp' not in locals():
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-if 'mk_else' not in locals():
-    mk_else = lambda x: x.split()
+# opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
+# opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
+# if 'mk_cn' not in locals():
+#     mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+# if 'mk_jp' not in locals():
+#     mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+# if 'mk_else' not in locals():
+#     mk_else = lambda x: x.split()
 
 def evaluate(ref_file,
              trans_file,
@@ -104,7 +103,6 @@ def evaluate(ref_file,
 
 def _clean(sentence, subword_option, text_format):
     """Clean and handle BPE or SPM outputs."""
-
 
     # BPE
     if subword_option == "bpe":
@@ -183,7 +181,8 @@ def _accuracy(label_file, pred_file):
 
     with codecs.getreader("utf-8")(
             tf.gfile.GFile(label_file, "rb")) as label_fh:
-        with codecs.getreader("utf-8")(tf.gfile.GFile(pred_file, "rb")) as pred_fh:
+        with codecs.getreader("utf-8")(
+                tf.gfile.GFile(pred_file, "rb")) as pred_fh:
             count = 0.0
             match = 0.0
             for label in label_fh:
@@ -267,8 +266,7 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = _clean(reference, subword_option,
-                                     text_format)
+            reference = _clean(reference, subword_option, text_format)
             reference_list.append(list(u''.join(reference.split(" "))))
         per_segment_references.append(reference_list)
 
@@ -291,15 +289,11 @@ def _kytea_bleu(ref_file,
                 subword_option=None,
                 text_format=None):
     """Compute BLEU scores and handling BPE."""
-    opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
-
-    opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
-
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-
-    mk_else = lambda x: x.split()
+    # opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
+    # opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
+    # mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+    # mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+    # mk_else = lambda x: x.split()
     max_order = 4
     smooth = False
 
@@ -321,8 +315,7 @@ def _kytea_bleu(ref_file,
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = _clean(reference, subword_option,
-                                     text_format)
+            reference = _clean(reference, subword_option, text_format)
             reference_list.append(mk_tgt(reference))
         per_segment_references.append(reference_list)
 
