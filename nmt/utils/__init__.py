@@ -6,7 +6,7 @@ comp_dict = pickle.load(open(dict_file, 'rb'))
 
 dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
 stroke_dict = pickle.load(open(dict_file, 'rb'))
-sentence = sentence.strip()
+
 
 opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
 
