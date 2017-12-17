@@ -39,8 +39,15 @@ if 'comp_dict' not in locals():
     current_dir = os.path.dirname(__file__)
     dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
     stroke_dict = pickle.load(open(dict_file, 'rb'))
-    
-def evaluate(ref_file, trans_file, metric,src,tgt, subword_option=None,text_format=None):
+
+
+def evaluate(ref_file,
+             trans_file,
+             metric,
+             src,
+             tgt,
+             subword_option=None,
+             text_format=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
     if metric.lower() == "bleu":
@@ -64,8 +71,7 @@ def evaluate(ref_file, trans_file, metric,src,tgt, subword_option=None,text_form
             src,
             tgt,
             subword_option=subword_option,
-            text_format=text_format
-            )
+            text_format=text_format)
     # ROUGE scores for summarization tasks
     elif metric.lower() == "rouge":
         evaluation_score = _rouge(
@@ -293,13 +299,21 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     return 100 * bleu_score
 
 
+if 'mk_tgt' not in locals():
+    if 'cn' in tgt:
+        mk_tgt = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+    elif 'jp' in tgt:
+        mk_tgt = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+    else:
+        mk_tgt = lambda x: x.split()
+
+
 def _kytea_bleu(ref_file,
                 trans_file,
                 src,
                 tgt,
                 subword_option=None,
-                text_format=None
-                ):
+                text_format=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
@@ -307,14 +321,8 @@ def _kytea_bleu(ref_file,
     opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
     opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
 
-    if 'mk_tgt' not in locals():
-      if 'cn' in tgt:
-          mk_tgt = lambda x:list(Mykytea.Mykytea(opt_cn).getWS(x))
-      elif 'jp' in tgt:
-          mk_tgt = lambda x:list(Mykytea.Mykytea(opt_jp).getWS(x))
-      else:
-          mk_tgt=lambda x:x.split()
-    
+
+
 
     ref_files = [ref_file]
     reference_text = []
