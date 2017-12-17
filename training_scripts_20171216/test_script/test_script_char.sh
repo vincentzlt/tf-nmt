@@ -24,7 +24,7 @@ fi
 CUDA_VISIBLE_DEVICES=2 python3 -m nmt.nmt \
     --src=jp \
     --tgt=cn\
-    --metrix=char_bleu,kytea_bleu \
+    --metrics=char_bleu,kytea_bleu \
     --text_format=char \
     --share_vocab=${SHARE_VOCAB} \
     --vocab_prefix=${DATA_ROOT}/${SHARE_VOCAB_DIR}/vocab \
