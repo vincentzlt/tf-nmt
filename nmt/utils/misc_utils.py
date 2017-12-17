@@ -193,7 +193,7 @@ def format_comp_text(symbols):
     return u''.join([comp_dict[s]  for s in symbols])
 
 def format_stroke_text(symbols):
-  '''Decode a sequence of stroke representations into sentence'''
+    '''Decode a sequence of stroke representations into sentence'''
     if 'comp_dict' not in locals():
         current_dir = os.path.dirname(__file__)
         dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
