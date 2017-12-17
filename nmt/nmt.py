@@ -19,7 +19,7 @@ import argparse
 import os
 import random
 import sys
-sys.path.append('../')
+sys.path.append('/clwork/vincentzlt/tf-nmt/nmt')
 
 # import matplotlib.image as mpimg
 import numpy as np
