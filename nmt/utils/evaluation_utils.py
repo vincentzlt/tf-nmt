@@ -26,6 +26,7 @@ import pickle
 
 from ..scripts import bleu
 from ..scripts import rouge
+from ..utils import  comp_dict,stroke_dict,mk_jp,mk_cn,mk_else
 
 import pdb
 
@@ -103,29 +104,23 @@ def evaluate(ref_file,
 
 def _clean(sentence, subword_option, text_format):
     """Clean and handle BPE or SPM outputs."""
-    current_dir = os.path.dirname(__file__)
-    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-    comp_dict = pickle.load(open(dict_file, 'rb'))
 
-    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-    stroke_dict = pickle.load(open(dict_file, 'rb'))
-    sentence = sentence.strip()
 
     # BPE
     if subword_option == "bpe":
         sentence = re.sub("@@ ", "", sentence)
         if text_format == 'comp':
-            sentence = u' '.join([cls.comp_dict[w] for w in sentence.split()])
+            sentence = u' '.join([comp_dict[w] for w in sentence.split()])
         elif text_format == 'stroke':
-            sentence = u' '.join([cls.stroke_dict[w] for w in sentence.split()])
+            sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
 
     # SPM
     elif subword_option == "spm":
         sentence = u"".join(sentence.split()).replace(u"\u2581", u" ").lstrip()
         if text_format == 'comp':
-            sentence = u' '.join([cls.comp_dict[w] for w in sentence.split()])
+            sentence = u' '.join([comp_dict[w] for w in sentence.split()])
         elif text_format == 'stroke':
-            sentence = u' '.join([cls.stroke_dict[w] for w in sentence.split()])
+            sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
 
 
 
@@ -309,11 +304,11 @@ def _kytea_bleu(ref_file,
     smooth = False
 
     if 'cn' in tgt:
-        mk_tgt = cls.mk_cn
+        mk_tgt = mk_cn
     elif 'jp' in tgt:
-        mk_tgt = cls.mk_jp
+        mk_tgt = mk_jp
     else:
-        mk_tgt = cls.mk_else
+        mk_tgt = mk_else
 
     ref_files = [ref_file]
     reference_text = []
