@@ -66,14 +66,14 @@ def evaluate(ref_file,
             text_format=text_format)
     # BLEU scores with char segmentation for translation task
     elif metric.lower() == "char_bleu":
-        evaluation_score = _char_bleu(
+        evaluation_score = SEG_BLEU._char_bleu(
             ref_file,
             trans_file,
             subword_option=subword_option,
             text_format=text_format)
     # BLEU scores with kytea segmentation for translation task
     elif metric.lower() == "kytea_bleu":
-        evaluation_score = _kytea_bleu(
+        evaluation_score = SEG_BLEU._kytea_bleu(
             ref_file,
             trans_file,
             src,
@@ -96,30 +96,40 @@ def evaluate(ref_file,
 
     return evaluation_score
 
+class CLEAN():
+    if 'comp_dict' not in locals():
+        current_dir = os.path.dirname(__file__)
+        dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+        comp_dict = pickle.load(open(dict_file, 'rb'))
+    if 'comp_dict' not in locals():
+        current_dir = os.path.dirname(__file__)
+        dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+        stroke_dict = pickle.load(open(dict_file, 'rb'))
 
-def _clean(sentence, subword_option, text_format):
-    """Clean and handle BPE or SPM outputs."""
-    sentence = sentence.strip()
+    @classmethod
+    def _clean(sentence, subword_option, text_format):
+        """Clean and handle BPE or SPM outputs."""
+        sentence = sentence.strip()
 
-    # BPE
-    if subword_option == "bpe":
-        sentence = re.sub("@@ ", "", sentence)
-        if text_format == 'comp':
-            sentence = u' '.join([comp_dict[w] for w in sentence.split()])
-        elif text_format == 'stroke':
-            sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
+        # BPE
+        if subword_option == "bpe":
+            sentence = re.sub("@@ ", "", sentence)
+            if text_format == 'comp':
+                sentence = u' '.join([comp_dict[w] for w in sentence.split()])
+            elif text_format == 'stroke':
+                sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
 
-    # SPM
-    elif subword_option == "spm":
-        sentence = u"".join(sentence.split()).replace(u"\u2581", u" ").lstrip()
-        if text_format == 'comp':
-            sentence = u' '.join([comp_dict[w] for w in sentence.split()])
-        elif text_format == 'stroke':
-            sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
+        # SPM
+        elif subword_option == "spm":
+            sentence = u"".join(sentence.split()).replace(u"\u2581", u" ").lstrip()
+            if text_format == 'comp':
+                sentence = u' '.join([comp_dict[w] for w in sentence.split()])
+            elif text_format == 'stroke':
+                sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
 
 
 
-    return sentence
+        return sentence
 
 
 # Follow //transconsole/localization/machine_translation/metrics/bleu_calc.py
@@ -139,14 +149,14 @@ def _bleu(ref_file, trans_file, subword_option=None,text_format=None):
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = _clean(reference, subword_option,text_format)
+            reference = CLEAN._clean(reference, subword_option,text_format)
             reference_list.append(reference.split(" "))
         per_segment_references.append(reference_list)
 
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = _clean(line, subword_option=None,text_format=None)
+            line = CLEAN._clean(line, subword_option=None,text_format=None)
             translations.append(line.split(" "))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
@@ -161,13 +171,13 @@ def _rouge(ref_file, summarization_file, subword_option=None,text_format=None):
     references = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(ref_file, "rb")) as fh:
         for line in fh:
-            references.append(_clean(line, subword_option,text_format))
+            references.append(CLEAN._clean(line, subword_option,text_format))
 
     hypotheses = []
     with codecs.getreader("utf-8")(
         tf.gfile.GFile(summarization_file, "rb")) as fh:
         for line in fh:
-            hypotheses.append(_clean(line, subword_option=None,text_format=None))
+            hypotheses.append(CLEAN._clean(line, subword_option=None,text_format=None))
 
     rouge_score_map = rouge.rouge(hypotheses, references)
     return 100 * rouge_score_map["rouge_l/f_score"]
@@ -176,7 +186,8 @@ def _rouge(ref_file, summarization_file, subword_option=None,text_format=None):
 def _accuracy(label_file, pred_file):
     """Compute accuracy, each line contains a label."""
 
-    with codecs.getreader("utf-8")(tf.gfile.GFile(label_file, "rb")) as label_fh:
+    with codecs.getreader("utf-8")(
+            tf.gfile.GFile(label_file, "rb")) as label_fh:
         with codecs.getreader("utf-8")(tf.gfile.GFile(pred_file, "rb")) as pred_fh:
             count = 0.0
             match = 0.0
@@ -245,114 +256,96 @@ def _moses_bleu(multi_bleu_script, tgt_test, trans_file, subword_option=None):
     return bleu_score
 
 
-def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
-    """Compute BLEU scores and handling BPE."""
-    max_order = 4
-    smooth = False
+class SEG_BLEU():
+    opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
 
-    ref_files = [ref_file]
-    reference_text = []
-    for reference_filename in ref_files:
-        with codecs.getreader("utf-8")(
-                tf.gfile.GFile(reference_filename, "rb")) as fh:
-            reference_text.append(fh.readlines())
+    opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
+    if 'mk_cn' not in locals():
+        mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+    if 'mk_jp' not in locals():
+        mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+    if 'mk_else' not in locals():
+        mk_else = lambda x: x.split()
 
-    per_segment_references = []
-    for references in zip(*reference_text):
-        reference_list = []
-        for reference in references:
-            reference = _clean(reference, subword_option, text_format)
-            reference_list.append(list(u''.join(reference.split(" "))))
-        per_segment_references.append(reference_list)
+    @classmethod
+    def _char_bleu(ref_file, trans_file, subword_option=None,
+                   text_format=None):
+        """Compute BLEU scores and handling BPE."""
+        max_order = 4
+        smooth = False
 
-    translations = []
-    with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
-        for line in fh:
-            line = _clean(line, subword_option=None, text_format=None)
-            translations.append(list(u''.join(line.split(" "))))
+        ref_files = [ref_file]
+        reference_text = []
+        for reference_filename in ref_files:
+            with codecs.getreader("utf-8")(
+                    tf.gfile.GFile(reference_filename, "rb")) as fh:
+                reference_text.append(fh.readlines())
 
-    # bleu_score, precisions, bp, ratio, translation_length, reference_length
-    bleu_score, _, _, _, _, _ = bleu.compute_bleu(
-        per_segment_references, translations, max_order, smooth)
-    return 100 * bleu_score
+        per_segment_references = []
+        for references in zip(*reference_text):
+            reference_list = []
+            for reference in references:
+                reference = CLEAN._clean(reference, subword_option,
+                                         text_format)
+                reference_list.append(list(u''.join(reference.split(" "))))
+            per_segment_references.append(reference_list)
 
+        translations = []
+        with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
+            for line in fh:
+                line = CLEAN._clean(
+                    line, subword_option=None, text_format=None)
+                translations.append(list(u''.join(line.split(" "))))
 
-def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
-    """Compute BLEU scores and handling BPE."""
-    max_order = 4
-    smooth = False
-
-    ref_files = [ref_file]
-    reference_text = []
-    for reference_filename in ref_files:
-        with codecs.getreader("utf-8")(
-                tf.gfile.GFile(reference_filename, "rb")) as fh:
-            reference_text.append(fh.readlines())
-
-    per_segment_references = []
-    for references in zip(*reference_text):
-        reference_list = []
-        for reference in references:
-            reference = _clean(reference, subword_option, text_format)
-            reference_list.append(list(u''.join(reference.split(" "))))
-        per_segment_references.append(reference_list)
-
-    translations = []
-    with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
-        for line in fh:
-            line = _clean(line, subword_option=None, text_format=None)
-            translations.append(list(u''.join(line.split(" "))))
-
-    # bleu_score, precisions, bp, ratio, translation_length, reference_length
-    bleu_score, _, _, _, _, _ = bleu.compute_bleu(
-        per_segment_references, translations, max_order, smooth)
-    return 100 * bleu_score
+        # bleu_score, precisions, bp, ratio, translation_length, reference_length
+        bleu_score, _, _, _, _, _ = bleu.compute_bleu(
+            per_segment_references, translations, max_order, smooth)
+        return 100 * bleu_score
 
 
 
 
+    @classmethod
+    def _kytea_bleu(ref_file,
+                    trans_file,
+                    src,
+                    tgt,
+                    subword_option=None,
+                    text_format=None):
+        """Compute BLEU scores and handling BPE."""
+        max_order = 4
+        smooth = False
 
-def _kytea_bleu(ref_file,
-                trans_file,
-                src,
-                tgt,
-                subword_option=None,
-                text_format=None):
-    """Compute BLEU scores and handling BPE."""
-    max_order = 4
-    smooth = False
+        if 'cn' in tgt:
+            mk_tgt = mk_cn
+        elif 'jp' in tgt:
+            mk_tgt = mk_jp
+        else:
+            mk_tgt = mk_else
 
 
-    if 'cn' in tgt:
-      mk_tgt=mk_cn
-    elif 'jp' in tgt:
-      mk_tgt=mk_jp
-    else:
-      mk_tgt=mk_else
+        ref_files = [ref_file]
+        reference_text = []
+        for reference_filename in ref_files:
+            with codecs.getreader("utf-8")(
+                    tf.gfile.GFile(reference_filename, "rb")) as fh:
+                reference_text.append(fh.readlines())
 
+        per_segment_references = []
+        for references in zip(*reference_text):
+            reference_list = []
+            for reference in references:
+                reference = CLEAN._clean(reference, subword_option, text_format)
+                reference_list.append(mk_tgt(reference))
+            per_segment_references.append(reference_list)
 
-    ref_files = [ref_file]
-    reference_text = []
-    for reference_filename in ref_files:
-        with codecs.getreader("utf-8")(
-                tf.gfile.GFile(reference_filename, "rb")) as fh:
-            reference_text.append(fh.readlines())
+        translations = []
+        with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
+            for line in fh:
+                line = CLEAN._clean(line, subword_option=None, text_format=None)
+                translations.append(mk_tgt(reference))
 
-    per_segment_references = []
-    for references in zip(*reference_text):
-        reference_list = []
-        for reference in references:
-            reference = _clean(reference, subword_option, text_format)
-            reference_list.append(mk_tgt(reference))
-        per_segment_references.append(reference_list)
-
-    translations = []
-    with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
-        for line in fh:
-            line = _clean(line, subword_option=None, text_format=None)
-            translations.append(mk_tgt(reference))
-
-    # bleu_score, precisions, bp, ratio, translation_length, reference_length
-    bleu_score, _, _, _, _, _ = bleu.compute_bleu(
-        per_segment_references, translations, max_order, smooth)
-    return 100 * bleu_score
+        # bleu_score, precisions, bp, ratio, translation_length, reference_length
+        bleu_score, _, _, _, _, _ = bleu.compute_bleu(
+            per_segment_references, translations, max_order, smooth)
+        return 100 * bleu_score
