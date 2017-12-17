@@ -27,8 +27,7 @@ import pickle
 from ..scripts import bleu
 from ..scripts import rouge
 
-
-
+import pdb
 
 __all__ = ["evaluate"]
 
@@ -41,6 +40,14 @@ if 'comp_dict' not in locals():
     dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
     stroke_dict = pickle.load(open(dict_file, 'rb'))
 
+opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
+opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
+if 'mk_cn' not in locals():
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+if 'mk_jp' not in locals():
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+if 'mk_else' not in locals():
+    mk_else = lambda x: x.split()
 
 def evaluate(ref_file,
              trans_file,
@@ -58,14 +65,14 @@ def evaluate(ref_file,
             subword_option=subword_option,
             text_format=text_format)
     # BLEU scores with char segmentation for translation task
-    if metric.lower() == "char_bleu":
+    elif metric.lower() == "char_bleu":
         evaluation_score = _char_bleu(
             ref_file,
             trans_file,
             subword_option=subword_option,
             text_format=text_format)
     # BLEU scores with kytea segmentation for translation task
-    if metric.lower() == "kytea_bleu":
+    elif metric.lower() == "kytea_bleu":
         evaluation_score = _kytea_bleu(
             ref_file,
             trans_file,
@@ -302,12 +309,7 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     return 100 * bleu_score
 
 
-if 'mk_cn' not in locals():
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-if 'mk_jp' not in locals():
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-if 'mk_else' not in locals():
-    mk_else = lambda x: x.split()
+
 
 
 def _kytea_bleu(ref_file,
@@ -320,8 +322,6 @@ def _kytea_bleu(ref_file,
     max_order = 4
     smooth = False
 
-    opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
-    opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
 
     if 'cn' in tgt:
       mk_tgt=mk_cn

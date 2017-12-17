@@ -199,9 +199,9 @@ if 'comp_dict' not in locals():
 def format_comp_text(symbols):
     '''Decode a sequence of comp representations into sentence'''
 
-    return u''.join([comp_dict[s] for s in symbols])
+    return u' '.join([comp_dict[s] for s in symbols])
 
 def format_stroke_text(symbols):
     '''Decode a sequence of stroke representations into sentence'''
 
-    return u''.join([stroke_dict[s] for s in symbols])
+    return u' '.join([stroke_dict[s] for s in symbols])

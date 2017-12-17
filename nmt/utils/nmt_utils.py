@@ -24,6 +24,8 @@ import tensorflow as tf
 from ..utils import evaluation_utils
 from ..utils import misc_utils as utils
 
+import pdb
+
 __all__ = ["decode_and_evaluate", "get_translation"]
 
 
@@ -82,6 +84,7 @@ def decode_and_evaluate(name,
     evaluation_scores = {}
     if ref_file and tf.gfile.Exists(trans_file):
         for metric in metrics:
+            pdb.set_trace()
             score = evaluation_utils.evaluate(
                 ref_file,
                 trans_file,
@@ -89,7 +92,7 @@ def decode_and_evaluate(name,
                 src,
                 tgt,
                 subword_option=subword_option,
-                text_format=text_format,)
+                text_format=text_format)
             evaluation_scores[metric] = score
             utils.print_out("  %s %s: %.1f" % (metric, name, score))
 
@@ -112,7 +115,6 @@ def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option,text_format):
         translation = utils.format_spm_text(output)
     else:
         translation = utils.format_text(output)
-
     if text_format=="char":
       pass
     elif text_format=='comp':

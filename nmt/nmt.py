@@ -19,7 +19,7 @@ import argparse
 import os
 import random
 import sys
-sys.path.append('/clwork/vincentzlt/tf-nmt')
+import pdb
 
 # import matplotlib.image as mpimg
 import numpy as np
@@ -611,7 +611,6 @@ def extend_hparams(hparams):
     if not tf.gfile.Exists(hparams.out_dir):
         utils.print_out("# Creating output directory %s ..." % hparams.out_dir)
         tf.gfile.MakeDirs(hparams.out_dir)
-
     # Evaluation
     for metric in hparams.metrics:
         hparams.add_hparam("best_" + metric, 0)  # larger is better
@@ -697,7 +696,6 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         default_hparams,
         flags.hparams_path,
         save_hparams=(jobid == 0))
-
     if flags.inference_input_file:
         # Inference indices
         hparams.inference_indices = None
@@ -733,6 +731,7 @@ def main(unused_argv):
 
 
 if __name__ == "__main__":
+    sys.path.append('/clwork/vincentzlt/tf-nmt/')
     nmt_parser = argparse.ArgumentParser()
     add_arguments(nmt_parser)
     FLAGS, unparsed = nmt_parser.parse_known_args()
