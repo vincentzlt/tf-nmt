@@ -183,6 +183,11 @@ def add_arguments(parser):
     parser.add_argument(
         "--tgt", type=str, default=None, help="Target suffix, e.g., de.")
     parser.add_argument(
+        "--text_format",
+        type=str,
+        default='char',
+        help="the format of corpus text, format in (char, comp, stroke)")
+    parser.add_argument(
         "--train_prefix",
         type=str,
         default=None,
@@ -333,7 +338,7 @@ def add_arguments(parser):
         type=str,
         default="bleu",
         help=("Comma-separated list of evaluations "
-              "metrics (bleu,rouge,accuracy)"))
+              "metrics (bleu,rouge,accuracy,char_bleu,kytea_bleu)"))
     parser.add_argument(
         "--steps_per_external_eval",
         type=int,
@@ -445,6 +450,7 @@ def create_hparams(flags):
         # Data
         src=flags.src,
         tgt=flags.tgt,
+        text_format=flags.text_format,
         train_prefix=flags.train_prefix,
         dev_prefix=flags.dev_prefix,
         test_prefix=flags.test_prefix,
@@ -711,8 +717,7 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         ref_file = flags.inference_ref_file
         if ref_file and tf.gfile.Exists(trans_file):
             for metric in hparams.metrics:
-                score = evaluation_utils.evaluate(ref_file, trans_file, metric,
-                                                  hparams.subword_option)
+                score = evaluation_utils.evaluate(ref_file, trans_file, metric,subword_option=hparams.subword_option,  text_format=hparams.text_format)
                 utils.print_out("  %s: %.1f" % (metric, score))
     else:
         # Train

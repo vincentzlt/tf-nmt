@@ -455,11 +455,7 @@ def _sample_decode(model, global_step, sess, hparams, iterator, src_data,
         # get the top translation.
         nmt_outputs = nmt_outputs[0]
 
-    translation = nmt_utils.get_translation(
-        nmt_outputs,
-        sent_id=0,
-        tgt_eos=hparams.eos,
-        subword_option=hparams.subword_option)
+    translation = nmt_utils.get_translation(nmt_outputs,sent_id=0,tgt_eos=hparams.eos,subword_option=hparams.subword_option,text_format=hparams.text_format)
     utils.print_out("    src: " + src_data[decode_id])
     utils.print_out("    ref: " + tgt_data[decode_id])
     utils.print_out("    nmt: " + translation.decode())
@@ -491,6 +487,7 @@ def _external_eval(model, global_step, sess, hparams, iterator,
         ref_file=tgt_file,
         metrics=hparams.metrics,
         subword_option=hparams.subword_option,
+        text_format=hparams.text_format,
         beam_width=hparams.beam_width,
         tgt_eos=hparams.eos,
         decode=decode)
