@@ -326,7 +326,7 @@ def _kytea_bleu(ref_file,
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = CLEAN._clean(reference, subword_option,
+            reference = _clean(reference, subword_option,
                                      text_format)
             reference_list.append(mk_tgt(reference))
         per_segment_references.append(reference_list)
@@ -334,7 +334,7 @@ def _kytea_bleu(ref_file,
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = CLEAN._clean(line, subword_option=None, text_format=None)
+            line = _clean(line, subword_option=None, text_format=None)
             translations.append(mk_tgt(reference))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
