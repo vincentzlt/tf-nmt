@@ -28,6 +28,7 @@ from ..scripts import rouge
 from ..utils import  comp_dict,stroke_dict,mk_jp,mk_cn,mk_else
 
 import pdb
+import subprocess
 
 __all__ = ["evaluate"]
 
@@ -97,13 +98,49 @@ def evaluate(ref_file,
     return evaluation_score
 
 
+def _clean_file(file, subword_option, text_format):
+    #BPE
+    if subword_option == 'bpe':
+        subprocess.call(
+            "sed -r 's/(@@ )|(@@ ?$)//g'{} > {}".format(
+                file, file + '.de-bpe'),
+            shell=True)
+        if text_format == 'comp':
+            with open(file + '.de-bpe.decomp', "wt") as f:
+                f.writelines([
+                    "".join([comp_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-bpe', 'rt')
+                ])
+        elif text_format == 'stroke':
+            with open(file + '.de-bpe.destroke', "wt") as f:
+                f.writelines([
+                    "".join([stroke_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-bpe', 'rt')
+                ])
+
+    #SPM
+    if subword_option == 'spm':
+        subprocess.call(
+            "cat {} | tr -d ' ' | tr '▁' ' ' > {}".format(file, file + '.de-spm'),
+            shell=True)
+        if text_format == 'comp':
+            with open(file + '.de-spm.decomp', "wt") as f:
+                f.writelines([
+                    "".join([comp_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-spm', 'rt')
+                ])
+        elif text_format == 'stroke':
+            with open(file + '.de-spm.destroke', "wt") as f:
+                f.writelines([
+                    "".join([stroke_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-spm', 'rt')
+                ])
 
 
 
 
 def _clean(sentence, subword_option, text_format):
     """Clean and handle BPE or SPM outputs."""
-
     # BPE
     if subword_option == "bpe":
         sentence = re.sub("@@ ", "", sentence)
@@ -119,9 +156,6 @@ def _clean(sentence, subword_option, text_format):
             sentence = u' '.join([comp_dict[w] for w in sentence.split()])
         elif text_format == 'stroke':
             sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
-
-
-
     return sentence
 
 
@@ -158,17 +192,18 @@ def _bleu(ref_file, trans_file, subword_option=None,text_format=None):
     return 100 * bleu_score
 
 
-def _rouge(ref_file, summarization_file, subword_option=None,text_format=None):
+def _rouge(ref_file, summarization_file, subword_option=None,
+           text_format=None):
     """Compute ROUGE scores and handling BPE."""
 
     references = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(ref_file, "rb")) as fh:
         for line in fh:
-            references.append(_clean(line, subword_option,text_format))
+            references.append(_clean(line, subword_option, text_format))
 
     hypotheses = []
     with codecs.getreader("utf-8")(
-        tf.gfile.GFile(summarization_file, "rb")) as fh:
+            tf.gfile.GFile(summarization_file, "rb")) as fh:
         for line in fh:
             hypotheses.append(_clean(line, subword_option=None,text_format=None))
 
@@ -297,13 +332,20 @@ def _kytea_bleu(ref_file,
     max_order = 4
     smooth = False
 
+    # if 'cn' in tgt:
+    #     mk_tgt = mk_cn
+    # elif 'jp' in tgt:
+    #     mk_tgt = mk_jp
+    # else:
+    #     mk_tgt = mk_else
     if 'cn' in tgt:
-        mk_tgt = mk_cn
+        opt = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
     elif 'jp' in tgt:
-        mk_tgt = mk_jp
+        opt = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
     else:
-        mk_tgt = mk_else
+        raise ('target language neigther in cn or jp')
 
+    subprocess.call('kytea -model {} -out tok < ref_file > test.full')
     ref_files = [ref_file]
     reference_text = []
     for reference_filename in ref_files:
