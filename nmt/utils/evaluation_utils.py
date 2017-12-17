@@ -171,13 +171,13 @@ def _rouge(ref_file, summarization_file, subword_option=None,text_format=None):
     references = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(ref_file, "rb")) as fh:
         for line in fh:
-            references.append(CLEAN._clean(line, subword_option,text_format))
+            references.append(_clean(line, subword_option,text_format))
 
     hypotheses = []
     with codecs.getreader("utf-8")(
         tf.gfile.GFile(summarization_file, "rb")) as fh:
         for line in fh:
-            hypotheses.append(CLEAN._clean(line, subword_option=None,text_format=None))
+            hypotheses.append(_clean(line, subword_option=None,text_format=None))
 
     rouge_score_map = rouge.rouge(hypotheses, references)
     return 100 * rouge_score_map["rouge_l/f_score"]
@@ -272,7 +272,7 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = CLEAN._clean(reference, subword_option,
+            reference = _clean(reference, subword_option,
                                      text_format)
             reference_list.append(list(u''.join(reference.split(" "))))
         per_segment_references.append(reference_list)
@@ -280,7 +280,7 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = CLEAN._clean(line, subword_option=None, text_format=None)
+            line = _clean(line, subword_option=None, text_format=None)
             translations.append(list(u''.join(line.split(" "))))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
