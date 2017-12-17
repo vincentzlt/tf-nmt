@@ -97,14 +97,13 @@ def evaluate(ref_file,
     return evaluation_score
 
 class CLEAN():
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-        comp_dict = pickle.load(open(dict_file, 'rb'))
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-        stroke_dict = pickle.load(open(dict_file, 'rb'))
+
+    current_dir = os.path.dirname(__file__)
+    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+    comp_dict = pickle.load(open(dict_file, 'rb'))
+
+    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+    stroke_dict = pickle.load(open(dict_file, 'rb'))
 
     @classmethod
     def _clean(cls,sentence, subword_option, text_format):
@@ -260,15 +259,18 @@ class SEG_BLEU():
     opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
 
     opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
-    if 'mk_cn' not in locals():
-        mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-    if 'mk_jp' not in locals():
-        mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-    if 'mk_else' not in locals():
-        mk_else = lambda x: x.split()
+
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+
+    mk_else = lambda x: x.split()
 
     @classmethod
-    def _char_bleu(cls,ref_file, trans_file, subword_option=None,
+    def _char_bleu(cls,
+                   ref_file,
+                   trans_file,
+                   subword_option=None,
                    text_format=None):
         """Compute BLEU scores and handling BPE."""
         max_order = 4
@@ -302,11 +304,9 @@ class SEG_BLEU():
             per_segment_references, translations, max_order, smooth)
         return 100 * bleu_score
 
-
-
-
     @classmethod
-    def _kytea_bleu(cls,ref_file,
+    def _kytea_bleu(cls,
+                    ref_file,
                     trans_file,
                     src,
                     tgt,
@@ -335,7 +335,8 @@ class SEG_BLEU():
         for references in zip(*reference_text):
             reference_list = []
             for reference in references:
-                reference = CLEAN._clean(reference, subword_option, text_format)
+                reference = CLEAN._clean(reference, subword_option,
+                                         text_format)
                 reference_list.append(mk_tgt(reference))
             per_segment_references.append(reference_list)
 
