@@ -19,6 +19,7 @@ import argparse
 import os
 import random
 import sys
+sys.path.append('../')
 
 # import matplotlib.image as mpimg
 import numpy as np
@@ -717,7 +718,12 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         ref_file = flags.inference_ref_file
         if ref_file and tf.gfile.Exists(trans_file):
             for metric in hparams.metrics:
-                score = evaluation_utils.evaluate(ref_file, trans_file, metric,subword_option=hparams.subword_option,  text_format=hparams.text_format)
+                score = evaluation_utils.evaluate(
+                    ref_file,
+                    trans_file,
+                    metric,
+                    subword_option=hparams.subword_option,
+                    text_format=hparams.text_format)
                 utils.print_out("  %s: %.1f" % (metric, score))
     else:
         # Train
