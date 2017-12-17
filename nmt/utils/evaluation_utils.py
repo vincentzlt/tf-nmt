@@ -22,6 +22,7 @@ import subprocess
 import tensorflow as tf
 
 import Mykytea
+import pickle
 
 from ..scripts import bleu
 from ..scripts import rouge
@@ -30,7 +31,15 @@ from ..scripts import rouge
 
 __all__ = ["evaluate"]
 
-
+if 'comp_dict' not in locals():
+    current_dir = os.path.dirname(__file__)
+    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+    comp_dict = pickle.load(open(dict_file, 'rb'))
+if 'comp_dict' not in locals():
+    current_dir = os.path.dirname(__file__)
+    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+    stroke_dict = pickle.load(open(dict_file, 'rb'))
+    
 def evaluate(ref_file, trans_file, metric,src,tgt, subword_option=None,text_format=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
@@ -77,14 +86,7 @@ def evaluate(ref_file, trans_file, metric,src,tgt, subword_option=None,text_form
 def _clean(sentence, subword_option, text_format):
     """Clean and handle BPE or SPM outputs."""
     sentence = sentence.strip()
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-        comp_dict = pickle.load(open(dict_file, 'rb'))
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-        stroke_dict = pickle.load(open(dict_file, 'rb'))
+
     # BPE
     if subword_option == "bpe":
         sentence = re.sub("@@ ", "", sentence)

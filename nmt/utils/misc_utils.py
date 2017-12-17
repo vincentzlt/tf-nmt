@@ -32,7 +32,8 @@ import tensorflow as tf
 def check_tensorflow_version():
     min_tf_version = "1.4.0-dev20171024"
     if tf.__version__ < min_tf_version:
-        raise EnvironmentError("Tensorflow version must >= %s" % min_tf_version)
+        raise EnvironmentError(
+            "Tensorflow version must >= %s" % min_tf_version)
 
 
 def safe_exp(value):
@@ -87,7 +88,8 @@ def load_hparams(model_dir):
     hparams_file = os.path.join(model_dir, "hparams")
     if tf.gfile.Exists(hparams_file):
         print_out("# Loading hparams from %s" % hparams_file)
-        with codecs.getreader("utf-8")(tf.gfile.GFile(hparams_file, "rb")) as f:
+        with codecs.getreader("utf-8")(
+                tf.gfile.GFile(hparams_file, "rb")) as f:
             try:
                 hparams_values = json.load(f)
                 hparams = tf.contrib.training.HParams(**hparams_values)
@@ -183,19 +185,23 @@ def format_spm_text(symbols):
     return u"".join(format_text(symbols).decode("utf-8").split()).replace(
         u"\u2581", u" ").strip().encode("utf-8")
 
+
+if 'comp_dict' not in locals():
+    current_dir = os.path.dirname(__file__)
+    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+    comp_dict = pickle.load(open(dict_file, 'rb'))
+if 'comp_dict' not in locals():
+    current_dir = os.path.dirname(__file__)
+    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+    stroke_dict = pickle.load(open(dict_file, 'rb'))
+
+
 def format_comp_text(symbols):
     '''Decode a sequence of comp representations into sentence'''
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-        comp_dict=pickle.load(open(dict_file,'rb'))
-    
-    return u''.join([comp_dict[s]  for s in symbols])
+
+    return u''.join([comp_dict[s] for s in symbols])
 
 def format_stroke_text(symbols):
     '''Decode a sequence of stroke representations into sentence'''
-    if 'comp_dict' not in locals():
-        current_dir = os.path.dirname(__file__)
-        dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-        stroke_dict=pickle.load(open(dict_file,'rb'))
-    return u''.join([stroke_dict[s]  for s in symbols])
+
+    return u''.join([stroke_dict[s] for s in symbols])
