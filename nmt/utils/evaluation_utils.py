@@ -66,14 +66,14 @@ def evaluate(ref_file,
             text_format=text_format)
     # BLEU scores with char segmentation for translation task
     elif metric.lower() == "char_bleu":
-        evaluation_score = SEG_BLEU._char_bleu(
+        evaluation_score = _char_bleu(
             ref_file,
             trans_file,
             subword_option=subword_option,
             text_format=text_format)
     # BLEU scores with kytea segmentation for translation task
     elif metric.lower() == "kytea_bleu":
-        evaluation_score = SEG_BLEU._kytea_bleu(
+        evaluation_score = _kytea_bleu(
             ref_file,
             trans_file,
             src,
@@ -101,7 +101,7 @@ def evaluate(ref_file,
 
 
 
-def _clean(cls, sentence, subword_option, text_format):
+def _clean(sentence, subword_option, text_format):
     """Clean and handle BPE or SPM outputs."""
     current_dir = os.path.dirname(__file__)
     dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
@@ -149,14 +149,14 @@ def _bleu(ref_file, trans_file, subword_option=None,text_format=None):
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = CLEAN._clean(reference, subword_option,text_format)
+            reference = _clean(reference, subword_option,text_format)
             reference_list.append(reference.split(" "))
         per_segment_references.append(reference_list)
 
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = CLEAN._clean(line, subword_option=None,text_format=None)
+            line = _clean(line, subword_option=None,text_format=None)
             translations.append(line.split(" "))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
@@ -256,11 +256,7 @@ def _moses_bleu(multi_bleu_script, tgt_test, trans_file, subword_option=None):
     return bleu_score
 
 
-def _char_bleu(cls,
-               ref_file,
-               trans_file,
-               subword_option=None,
-               text_format=None):
+def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
@@ -293,8 +289,7 @@ def _char_bleu(cls,
     return 100 * bleu_score
 
 
-def _kytea_bleu(cls,
-                ref_file,
+def _kytea_bleu(ref_file,
                 trans_file,
                 src,
                 tgt,
