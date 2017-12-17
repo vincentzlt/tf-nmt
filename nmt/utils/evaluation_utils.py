@@ -31,7 +31,7 @@ from ..scripts import rouge
 __all__ = ["evaluate"]
 
 
-def evaluate(ref_file, trans_file, metric, subword_option=None,src,tgt,text_format=None):
+def evaluate(ref_file, trans_file, metric,src,tgt, subword_option=None,text_format=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
     if metric.lower() == "bleu":
@@ -52,10 +52,11 @@ def evaluate(ref_file, trans_file, metric, subword_option=None,src,tgt,text_form
         evaluation_score = _kytea_bleu(
             ref_file,
             trans_file,
-            subword_option=subword_option,
-            text_format=text_format,
             src,
-            tgt)
+            tgt,
+            subword_option=subword_option,
+            text_format=text_format
+            )
     # ROUGE scores for summarization tasks
     elif metric.lower() == "rouge":
         evaluation_score = _rouge(
@@ -292,10 +293,11 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
 
 def _kytea_bleu(ref_file,
                 trans_file,
-                subword_option=None,
-                text_format=None,
                 src,
-                tgt):
+                tgt,
+                subword_option=None,
+                text_format=None
+                ):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
