@@ -107,7 +107,7 @@ class CLEAN():
         stroke_dict = pickle.load(open(dict_file, 'rb'))
 
     @classmethod
-    def _clean(sentence, subword_option, text_format):
+    def _clean(cls,sentence, subword_option, text_format):
         """Clean and handle BPE or SPM outputs."""
         sentence = sentence.strip()
 
@@ -268,7 +268,7 @@ class SEG_BLEU():
         mk_else = lambda x: x.split()
 
     @classmethod
-    def _char_bleu(ref_file, trans_file, subword_option=None,
+    def _char_bleu(cls,ref_file, trans_file, subword_option=None,
                    text_format=None):
         """Compute BLEU scores and handling BPE."""
         max_order = 4
@@ -306,7 +306,7 @@ class SEG_BLEU():
 
 
     @classmethod
-    def _kytea_bleu(ref_file,
+    def _kytea_bleu(cls,ref_file,
                     trans_file,
                     src,
                     tgt,
