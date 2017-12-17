@@ -117,7 +117,7 @@ def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option,text_format):
       pass
     elif text_format=='comp':
       translation=utils.format_comp_text(output)
-    elif text_format=='stroke:
+    elif text_format=='stroke':
       translation=utils.format_stroke_text(output)
 
     return translation
