@@ -1,3 +1,5 @@
+import os,pickle,Mykytea
+
 current_dir = os.path.dirname(__file__)
 dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
 comp_dict = pickle.load(open(dict_file, 'rb'))
