@@ -96,19 +96,20 @@ def evaluate(ref_file,
 
     return evaluation_score
 
-class CLEAN():
 
-    current_dir = os.path.dirname(__file__)
-    dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
-    comp_dict = pickle.load(open(dict_file, 'rb'))
 
-    dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
-    stroke_dict = pickle.load(open(dict_file, 'rb'))
 
-    @classmethod
-    def _clean(cls,sentence, subword_option, text_format):
+
+
+def _clean(cls,sentence, subword_option, text_format):
         """Clean and handle BPE or SPM outputs."""
-        sentence = sentence.strip()
+        current_dir = os.path.dirname(__file__)
+        dict_file = os.path.join(current_dir, './dicts/comp_dict.pkl')
+        comp_dict = pickle.load(open(dict_file, 'rb'))
+
+        dict_file = os.path.join(current_dir, './dicts/stroke_dict.pkl')
+        stroke_dict = pickle.load(open(dict_file, 'rb'))
+            sentence = sentence.strip()
 
         # BPE
         if subword_option == "bpe":
@@ -255,19 +256,7 @@ def _moses_bleu(multi_bleu_script, tgt_test, trans_file, subword_option=None):
     return bleu_score
 
 
-class SEG_BLEU():
-    opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
-
-    opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
-
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-
-    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-
-    mk_else = lambda x: x.split()
-
-    @classmethod
-    def _char_bleu(cls,
+def _char_bleu(cls,
                    ref_file,
                    trans_file,
                    subword_option=None,
@@ -304,8 +293,7 @@ class SEG_BLEU():
             per_segment_references, translations, max_order, smooth)
         return 100 * bleu_score
 
-    @classmethod
-    def _kytea_bleu(cls,
+def _kytea_bleu(cls,
                     ref_file,
                     trans_file,
                     src,
@@ -313,6 +301,15 @@ class SEG_BLEU():
                     subword_option=None,
                     text_format=None):
         """Compute BLEU scores and handling BPE."""
+        opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
+
+        opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
+
+        mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+
+        mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+
+        mk_else = lambda x: x.split()
         max_order = 4
         smooth = False
 
