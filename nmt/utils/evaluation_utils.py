@@ -115,17 +115,17 @@ class CLEAN():
         if subword_option == "bpe":
             sentence = re.sub("@@ ", "", sentence)
             if text_format == 'comp':
-                sentence = u' '.join([comp_dict[w] for w in sentence.split()])
+                sentence = u' '.join([cls.comp_dict[w] for w in sentence.split()])
             elif text_format == 'stroke':
-                sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
+                sentence = u' '.join([cls.stroke_dict[w] for w in sentence.split()])
 
         # SPM
         elif subword_option == "spm":
             sentence = u"".join(sentence.split()).replace(u"\u2581", u" ").lstrip()
             if text_format == 'comp':
-                sentence = u' '.join([comp_dict[w] for w in sentence.split()])
+                sentence = u' '.join([cls.comp_dict[w] for w in sentence.split()])
             elif text_format == 'stroke':
-                sentence = u' '.join([stroke_dict[w] for w in sentence.split()])
+                sentence = u' '.join([cls.stroke_dict[w] for w in sentence.split()])
 
 
 
@@ -317,11 +317,11 @@ class SEG_BLEU():
         smooth = False
 
         if 'cn' in tgt:
-            mk_tgt = mk_cn
+            mk_tgt = cls.mk_cn
         elif 'jp' in tgt:
-            mk_tgt = mk_jp
+            mk_tgt = cls.mk_jp
         else:
-            mk_tgt = mk_else
+            mk_tgt = cls.mk_else
 
 
         ref_files = [ref_file]
