@@ -184,8 +184,10 @@ def _accuracy(label_file, pred_file):
 def _word_accuracy(label_file, pred_file):
     """Compute accuracy on per word basis."""
 
-    with codecs.getreader("utf-8")(tf.gfile.GFile(label_file, "r")) as label_fh:
-        with codecs.getreader("utf-8")(tf.gfile.GFile(pred_file, "r")) as pred_fh:
+    with codecs.getreader("utf-8")(
+            tf.gfile.GFile(label_file, "r")) as label_fh:
+        with codecs.getreader("utf-8")(
+                tf.gfile.GFile(pred_file, "r")) as pred_fh:
             total_acc, total_count = 0., 0.
             for sentence in label_fh:
                 labels = sentence.strip().split(" ")
@@ -299,13 +301,12 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     return 100 * bleu_score
 
 
-if 'mk_tgt' not in locals():
-    if 'cn' in tgt:
-        mk_tgt = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
-    elif 'jp' in tgt:
-        mk_tgt = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
-    else:
-        mk_tgt = lambda x: x.split()
+if 'mk_cn' not in locals():
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_cn).getWS(x))
+if 'mk_jp' not in locals():
+    mk_jp = lambda x: list(Mykytea.Mykytea(opt_jp).getWS(x))
+if 'mk_else' not in locals():
+    mk_else = lambda x: x.split()
 
 
 def _kytea_bleu(ref_file,
@@ -321,7 +322,12 @@ def _kytea_bleu(ref_file,
     opt_jp = "-model /home/vincentzlt/kytea/models/jp-0.4.7-1.mod"
     opt_cn = "-model /home/vincentzlt/kytea/models/msr-0.4.0-1.mod"
 
-
+    if 'cn' in tgt:
+      mk_tgt=mk_cn
+    elif 'jp' in tgt:
+      mk_tgt=mk_jp
+    else:
+      mk_tgt=mk_else
 
 
     ref_files = [ref_file]
