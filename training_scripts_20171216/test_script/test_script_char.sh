@@ -11,7 +11,7 @@ echo 'working on ' `pwd`
 echo 'save model to ' ${MODEL_ROOT}/${MODEL}
 
 
-DATA_ROOT=`pwd`nmt/testdata/jc_mini_data/char
+DATA_ROOT=`pwd`/nmt/testdata/jc_mini_data/char
 DATA_SPLIT=
 SHARE_VOCAB=false
 if [ ${SHARE_VOCAB} = true ]; then
