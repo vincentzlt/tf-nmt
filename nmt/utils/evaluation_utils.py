@@ -27,6 +27,8 @@ import pickle
 from ..scripts import bleu
 from ..scripts import rouge
 
+import pdb
+
 
 
 __all__ = ["evaluate"]
@@ -84,6 +86,7 @@ def evaluate(ref_file,
     elif metric.lower() == "word_accuracy":
         evaluation_score = _word_accuracy(ref_file, trans_file)
     else:
+        pdb.set_trace()
         raise ValueError("Unknown metric %s" % metric)
 
     return evaluation_score
