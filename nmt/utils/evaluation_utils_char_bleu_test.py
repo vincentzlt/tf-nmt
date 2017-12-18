@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-
 """Tests for evaluation_utils.py."""
 
 from __future__ import absolute_import
@@ -25,21 +24,19 @@ from ..utils import evaluation_utils
 
 
 class EvaluationUtilsTest(tf.test.TestCase):
+    def testEvaluate(self):
+        output = "nmt/testdata/deen_output"
+        ref_bpe = "nmt/testdata/deen_ref_bpe"
+        ref_spm = "nmt/testdata/deen_ref_spm"
 
-  def testEvaluate(self):
-    output = "nmt/testdata/deen_output"
-    ref_bpe = "nmt/testdata/deen_ref_bpe"
-    ref_spm = "nmt/testdata/deen_ref_spm"
+        expected_bleu_score = 22.5855084573
+        expected_rouge_score = 50.8429782599
 
-    expected_bleu_score = 22.5855084573
-    expected_rouge_score = 50.8429782599
+        bpe_bleu_score = evaluation_utils.evaluate(
+            src='cn', tgt='jp', ref_spm, output, "char_bleu", "spm")
 
-    bpe_bleu_score = evaluation_utils.evaluate(src='cn',tgt='jp'
-        ref_bpe, output, "char_bleu", "spm")
+        self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
 
-    self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
-
-  
 
 if __name__ == "__main__":
-  tf.test.main()
+    tf.test.main()
