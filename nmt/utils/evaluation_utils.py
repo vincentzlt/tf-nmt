@@ -306,10 +306,13 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     _clean_file(ref_file,subword_option=subword_option,text_format=text_format)
     _clean_file(trans_file,subword_option=None,text_format=text_format)
 
+    ref_file_processed=ref_file+'.de-'+subword_option+'.de-'+text_format
+
+    trans_file_processed=trans_file+'.de-'+text_format
+
     per_segment_references=[[list("".join(line.split()))] for line in open(ref_file,'rt')]
     translations = [[list("".join(line.split()))]
                     for line in open(trans_file, 'rt')]
-
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
     bleu_score, _, _, _, _, _ = bleu.compute_bleu(
