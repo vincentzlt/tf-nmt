@@ -22,6 +22,8 @@ import tensorflow as tf
 
 from ..utils import evaluation_utils
 
+import pdb
+
 
 class EvaluationUtilsTest(tf.test.TestCase):
     def testEvaluate(self):
@@ -32,6 +34,7 @@ class EvaluationUtilsTest(tf.test.TestCase):
         expected_bleu_score = 22.5855084573
         expected_rouge_score = 50.8429782599
 
+        pdb.set_trace()
         bpe_bleu_score = evaluation_utils.evaluate(
             ref_spm, output, "char_bleu", 'cn', 'jp', "spm", 'char')
 
