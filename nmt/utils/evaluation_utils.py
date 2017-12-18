@@ -38,6 +38,7 @@ def evaluate(ref_file,
              text_format=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
+    pdb.set_trace()
     if metric.lower() == "bleu":
         evaluation_score = _bleu(
             ref_file, trans_file, subword_option=subword_option)
@@ -49,14 +50,12 @@ def evaluate(ref_file,
         evaluation_score = _accuracy(ref_file, trans_file)
     elif metric.lower() == "word_accuracy":
         evaluation_score = _word_accuracy(ref_file, trans_file)
-    pdb.set_trace()
     elif metric.lower() == "char_bleu":
         evaluation_score = _char_bleu(
             ref_file,
             trans_file,
             subword_option=subword_option,
             text_format=text_format)
-    pdb.set_trace()
     elif metric.lower()=="kytea_bleu":
         evaluation_score = _kytea_bleu(
             ref_file,
@@ -81,8 +80,8 @@ def _tr_file(fpath, tr_dict, suffix):
 def _kytea_bleu(ref_file,
                 trans_file,
                 subword_option=None,
-                tgt_lang=tgt_lang,
-                text_format=text_format):
+                tgt_lang=None,
+                text_format=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
@@ -139,7 +138,7 @@ def _kytea_bleu(ref_file,
 def _char_bleu(ref_file,
                trans_file,
                subword_option=None,
-               text_format=text_format):
+               text_format=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False

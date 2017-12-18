@@ -510,7 +510,7 @@ def create_hparams(flags):
         eos=flags.eos if flags.eos else vocab_utils.EOS,
         subword_option=flags.subword_option,
         check_special_token=flags.check_special_token,
-        test_format=flags.text_format,
+        text_format=flags.text_format,
 
         # Misc
         forget_bias=flags.forget_bias,
