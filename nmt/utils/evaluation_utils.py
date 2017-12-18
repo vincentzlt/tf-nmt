@@ -121,7 +121,7 @@ def _clean_file(file, subword_option, text_format):
     #SPM
     if subword_option == 'spm':
         subprocess.call(
-            "cat {} | tr -d ' ' | tr '▁' ' ' > {}".format(file, file + '.de-spm'),
+            "cat {} | tr -d ' ' | sed -r  's/▁//g' > {}".format(file, file + '.de-spm'),
             shell=True)
         if text_format == 'comp':
             with open(file + '.de-spm.decomp', "wt") as f:
