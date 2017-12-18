@@ -33,7 +33,7 @@ class EvaluationUtilsTest(tf.test.TestCase):
         expected_rouge_score = 50.8429782599
 
         bpe_bleu_score = evaluation_utils.evaluate(
-            ref_spm, output, "char_bleu", "spm", src='cn', tgt='jp')
+            ref_spm, output, "char_bleu", 'cn', 'jp', "spm", 'char')
 
         self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
 
