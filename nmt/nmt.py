@@ -715,7 +715,7 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         trans_file = flags.inference_output_file
         ckpt = flags.ckpt
         if not ckpt:
-            ckpt = tf.train.latest_checkpoint(out_dir)
+            ckpt = tf.train.latest_checkpoint(os.path.join(out_dir,"checkpoints"))
         inference_fn(ckpt, flags.inference_input_file, trans_file, hparams,
                      num_workers, jobid)
 

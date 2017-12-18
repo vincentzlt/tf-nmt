@@ -20,7 +20,6 @@
   "optimizer": "sgd",
   "residual": false,
   "share_vocab": false,
-  "subword_option": "bpe",
   "sos": "<s>",
   "src_max_len": 50,
   "src_max_len_infer": null,
