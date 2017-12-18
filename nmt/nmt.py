@@ -315,6 +315,16 @@ def add_arguments(parser):
                       Set to bpe or spm to activate subword desegmentation.\
                       """)
 
+    # Text Format
+    parser.add_argument(
+        "--text_format",
+        type=str,
+        default="",
+        choices=["", "comp", "stroke"],
+        help="""\
+                      Set to comp or stroke to activate character substitution in evaluation.\
+                      """)
+
     # Misc
     parser.add_argument(
         "--num_gpus",
@@ -500,6 +510,7 @@ def create_hparams(flags):
         eos=flags.eos if flags.eos else vocab_utils.EOS,
         subword_option=flags.subword_option,
         check_special_token=flags.check_special_token,
+        test_format=flags.text_format,
 
         # Misc
         forget_bias=flags.forget_bias,
@@ -712,8 +723,9 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         ref_file = flags.inference_ref_file
         if ref_file and tf.gfile.Exists(trans_file):
             for metric in hparams.metrics:
-                score = evaluation_utils.evaluate(ref_file, trans_file, metric,
-                                                  hparams.subword_option)
+                score = evaluation_utils.evaluate(
+                    ref_file, trans_file, metric, hparams.subword_option,
+                    hparams.tgt, hparams.text_format)
                 utils.print_out("  %s: %.1f" % (metric, score))
     else:
         # Train

@@ -491,6 +491,8 @@ def _external_eval(model, global_step, sess, hparams, iterator,
         ref_file=tgt_file,
         metrics=hparams.metrics,
         subword_option=hparams.subword_option,
+        tgt=hparams.tgt, 
+        text_format=hparams.text_format,
         beam_width=hparams.beam_width,
         tgt_eos=hparams.eos,
         decode=decode)
