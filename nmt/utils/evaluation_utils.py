@@ -119,10 +119,23 @@ def _clean_file(file, subword_option, text_format):
                 ])
 
     #SPM
-    if subword_option == 'spm':
+    elif subword_option == 'spm':
         subprocess.call(
             "cat {} | tr -d ' ' | sed -r  's/▁//g' > {}".format(file, file + '.de-spm'),
             shell=True)
+        if text_format == 'comp':
+            with open(file + '.de-spm.decomp', "wt") as f:
+                f.writelines([
+                    "".join([comp_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-spm', 'rt')
+                ])
+        elif text_format == 'stroke':
+            with open(file + '.de-spm.destroke', "wt") as f:
+                f.writelines([
+                    "".join([stroke_dict[w] for w in l.split()]) + '\n'
+                    for l in open(file + '.de-spm', 'rt')
+                ])
+    else:
         if text_format == 'comp':
             with open(file + '.de-spm.decomp', "wt") as f:
                 f.writelines([
@@ -290,11 +303,30 @@ def _char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
     max_order = 4
     smooth = False
 
+    _clean_file(ref_file,subword_option=subword_option,text_format=text_format)
+    _clean_file(trans_file,subword_option=None,text_format=text_format)
+
+    per_segment_references=[[list("".join(line.split()))] for line in open(ref_file,'rt')]
+    translations = [[list("".join(line.split()))]
+                    for line in open(trans_file, 'rt')]
+
+
+    # bleu_score, precisions, bp, ratio, translation_length, reference_length
+    bleu_score, _, _, _, _, _ = bleu.compute_bleu(
+        per_segment_references, translations, max_order, smooth)
+    return 100 * bleu_score
+
+
+def __char_bleu(ref_file, trans_file, subword_option=None, text_format=None):
+    """Compute BLEU scores and handling BPE."""
+    max_order = 4
+    smooth = False
+
     ref_files = [ref_file]
     reference_text = []
     for reference_filename in ref_files:
-        with codecs.getreader("utf-8")(
-                tf.gfile.GFile(reference_filename, "rb")) as fh:
+        with codecs.getreader("utf-8")(tf.gfile.GFile(reference_filename,
+                                                      "rb")) as fh:
             reference_text.append(fh.readlines())
 
     per_segment_references = []

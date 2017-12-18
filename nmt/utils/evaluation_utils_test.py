@@ -70,6 +70,30 @@ class EvaluationUtilsTest(tf.test.TestCase):
         label_ref, pred_output, "word_accuracy")
     self.assertAlmostEqual(expected_word_accuracy_score, word_accuracy_score)
 
+    def testEvaluate_char_bleu(self):
+    output = "nmt/testdata/deen_output"
+    ref_bpe = "nmt/testdata/deen_ref_bpe"
+    ref_spm = "nmt/testdata/deen_ref_spm"
+
+    expected_bleu_score = 22.5855084573
+    expected_rouge_score = 50.8429782599
+
+    bpe_char_bleu_score = evaluation_utils.evaluate(
+        ref_bpe, output, "bleu", "bpe")
+    bpe_rouge_score = evaluation_utils.evaluate(
+        ref_bpe, output, "rouge", "bpe")
+
+    self.assertAlmostEqual(expected_bleu_score, bpe_bleu_score)
+    self.assertAlmostEqual(expected_rouge_score, bpe_rouge_score)
+
+    spm_bleu_score = evaluation_utils.evaluate(
+        ref_spm, output, "bleu", "spm")
+    spm_rouge_score = evaluation_utils.evaluate(
+        ref_spm, output, "rouge", "spm")
+
+    self.assertAlmostEqual(expected_rouge_score, spm_rouge_score)
+    self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
+
 
 if __name__ == "__main__":
   tf.test.main()
