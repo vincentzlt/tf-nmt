@@ -343,7 +343,7 @@ def add_arguments(parser):
         type=str,
         default="bleu",
         help=("Comma-separated list of evaluations "
-              "metrics (bleu,rouge,accuracy)"))
+              "metrics (bleu,rouge,accuracy,char_bleu,kytea_bleu)"))
     parser.add_argument(
         "--steps_per_external_eval",
         type=int,

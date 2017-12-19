@@ -30,6 +30,8 @@ from . import model_helper
 from .utils import misc_utils as utils
 from .utils import nmt_utils
 
+import pdb
+
 utils.check_tensorflow_version()
 
 __all__ = [
@@ -242,7 +244,7 @@ def train(hparams, scope=None, target_session=""):
     sample_tgt_data = inference.load_data(dev_tgt_file)
 
     summary_name = "train_log"
-    model_dir = hparams.out_dir
+    model_dir = os.path.join(hparams.out_dir,'checkpoints')
 
     # Log and output files
     log_file = os.path.join(out_dir, "log_%d" % time.time())
@@ -395,6 +397,7 @@ def train(hparams, scope=None, target_session=""):
 
     utils.print_out("# Start evaluating saved best models.")
     for metric in hparams.metrics:
+        pdb.set_trace()
         best_model_dir = getattr(hparams, "best_" + metric + "_dir")
         summary_writer = tf.summary.FileWriter(
             os.path.join(best_model_dir, summary_name), infer_model.graph)
@@ -491,7 +494,7 @@ def _external_eval(model, global_step, sess, hparams, iterator,
         ref_file=tgt_file,
         metrics=hparams.metrics,
         subword_option=hparams.subword_option,
-        tgt=hparams.tgt, 
+        tgt=hparams.tgt,
         text_format=hparams.text_format,
         beam_width=hparams.beam_width,
         tgt_eos=hparams.eos,

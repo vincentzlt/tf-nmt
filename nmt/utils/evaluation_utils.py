@@ -24,7 +24,6 @@ from ..scripts import bleu
 from ..scripts import rouge
 from ..utils import comp_dict,stroke_dict
 
-import pdb
 
 
 __all__ = ["evaluate"]
@@ -38,7 +37,6 @@ def evaluate(ref_file,
              text_format=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
-    pdb.set_trace()
     if metric.lower() == "bleu":
         evaluation_score = _bleu(
             ref_file, trans_file, subword_option=subword_option)
@@ -73,8 +71,9 @@ def _tr_file(fpath, tr_dict, suffix):
     new_fpath = fpath + '.' + suffix
     with open(new_fpath, 'wt') as fout:
         for l in open(fpath, 'rt'):
-            fout.write(' '.join(tr_dict[w] for w in l.split()))
+            fout.write(''.join(tr_dict.get(w,w) for w in l.split())+"\n")
     return new_fpath
+
 
 
 def _kytea_bleu(ref_file,
@@ -92,6 +91,9 @@ def _kytea_bleu(ref_file,
     elif text_format == 'stroke':
         ref_file = _tr_file(ref_file, stroke_dict, 'de-stroke')
         trans_file = _tr_file(trans_file, stroke_dict, 'de-stroke')
+    else:
+        ref_file = _tr_file(ref_file, {}, 'de-space')
+        trans_file = _tr_file(trans_file, {}, 'de-space')
 
     if tgt_lang == 'cn':
         MODEL_FILE = '/home/vincentzlt/kytea/models/msr-0.4.0-1.mod'
@@ -162,6 +164,7 @@ def _char_bleu(ref_file,
         reference_list = []
         for reference in references:
             reference = _clean(reference, subword_option)
+            reference=" ".join(list(''.join(reference.split())))
             reference_list.append(reference.split(" "))
         per_segment_references.append(reference_list)
 
@@ -169,6 +172,7 @@ def _char_bleu(ref_file,
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
             line = _clean(line, subword_option=None)
+            line=" ".join(list(''.join(line.split())))
             translations.append(line.split(" "))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
