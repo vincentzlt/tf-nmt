@@ -498,7 +498,9 @@ def _external_eval(model, global_step, sess, hparams, iterator,
         text_format=hparams.text_format,
         beam_width=hparams.beam_width,
         tgt_eos=hparams.eos,
-        decode=decode)
+        decode=decode,
+        src_vocab_file=hparams.src_vocab_file,
+        tgt_vocab_file=hparams.tgt_vocab_file)
     # Save on best metrics
     if decode:
         for metric in hparams.metrics:
