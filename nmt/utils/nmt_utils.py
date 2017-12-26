@@ -25,6 +25,8 @@ from ..utils import evaluation_utils
 from ..utils import misc_utils as utils
 from ..utils import comp_dict, stroke_dict
 
+import pdb
+
 __all__ = ["decode_and_evaluate", "get_translation"]
 
 
@@ -85,13 +87,16 @@ def decode_and_evaluate(name,
     evaluation_scores = {}
     if ref_file and tf.gfile.Exists(trans_file):
         for metric in metrics:
+            pdb.set_trace()
             vocab_all = open(src_vocab_file, 'rt').readlines() + open(
                 tgt_vocab_file, 'rt').readlines()
+            vocab_all=[w.strip() for w in vocab_all]
             if text_format == 'comp':
                 text2char_dict = {
                     _to_comp_stroke(w, comp_dict): w
                     for w in vocab_all
                 }
+
             elif text_format=='stroke':
                 text2char_dict = {
                     _to_comp_stroke(w, stroke_dict): w
@@ -112,8 +117,11 @@ def decode_and_evaluate(name,
     return evaluation_scores
 
 def _to_comp_stroke(w,trans_dict):
-    assert type(w)=='str'
-    return ''.join(trans_dict[w]  for c in w)
+    assert type(w)==str
+    if w not in ['<unk>','<s>','</s>']:
+        return ''.join(trans_dict[w]  for c in w)
+    else:
+        return w
 
 def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option):
     """Given batch decoding outputs, select a sentence and turn to text."""

@@ -83,7 +83,7 @@ def _kytea_bleu(ref_file,
                 trans_file,
                 subword_option=None,
                 tgt_lang=None,
-                text_format=None
+                text_format=None,
                 text2char_dict=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
