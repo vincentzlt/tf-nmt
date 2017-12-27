@@ -58,7 +58,7 @@ elif [ ${SHARE_VOCAB} = true ]; then
 	VOCAB_PREFIX=vocab.share
 fi
 
-CUDA_VISIBLE_DEVICES=5 python3 -m nmt.nmt \
+CUDA_VISIBLE_DEVICES=0 python3 -m nmt.nmt \
 	--src=jp \
 	--tgt=cn \
 	--metrics=char_bleu,kytea_bleu \

@@ -91,15 +91,17 @@ def decode_and_evaluate(name,
             vocab_all = open(src_vocab_file, 'rt').readlines() + open(
                 tgt_vocab_file, 'rt').readlines()
             vocab_all=[w.strip() for w in vocab_all]
+            char_comp_dict={comp_dict[w]:w for w in comp_dict}
+            char_stroke_dict={stroke_dict[w]:w for w in stroke_dict}
             if text_format == 'comp':
                 text2char_dict = {
-                    _to_comp_stroke(w, comp_dict): w
+                    _to_comp_stroke(w, char_comp_dict): w
                     for w in vocab_all
                 }
 
             elif text_format=='stroke':
                 text2char_dict = {
-                    _to_comp_stroke(w, stroke_dict): w
+                    _to_comp_stroke(w, char_stroke_dict): w
                     for w in vocab_all
                 }
 

@@ -27,28 +27,39 @@ from ..utils import evaluation_utils
 class EvaluationUtilsTest(tf.test.TestCase):
 
   def testEvaluate(self):
-    output = "nmt/testdata/deen_output"
-    ref_bpe = "nmt/testdata/deen_ref_bpe"
-    ref_spm = "nmt/testdata/deen_ref_spm"
+    output = "/work/vincentzlt/tf-nmt/model-big-vocab-comp-stroke/jc_comp_bpe8k_noshare/outputs_test/output_test-20000"
+    ref_spm = "/work/vincentzlt/tf-nmt/data_2/mecab-jieba_comp/bpe/8000/test.cn"
 
-    expected_bleu_score = 22.5855084573
-    expected_rouge_score = 50.8429782599
+    spm_char_bleu_score = evaluation_utils.evaluate(
+        ref_spm, output, "char_bleu", "spm")
+    spm_kytea_bleu_score = evaluation_utils.evaluate(
+        ref_spm, output, "kytea_bleu", "spm")
 
-    bpe_bleu_score = evaluation_utils.evaluate(
-        ref_bpe, output, "bleu", "bpe")
-    bpe_rouge_score = evaluation_utils.evaluate(
-        ref_bpe, output, "rouge", "bpe")
+    print(spm_char_bleu_score)
+    print(spm_kytea_bleu_score)
+# def testEvaluate(self):
+    # output = "nmt/testdata/deen_output"
+    # ref_bpe = "nmt/testdata/deen_ref_bpe"
+    # ref_spm = "nmt/testdata/deen_ref_spm"
 
-    self.assertAlmostEqual(expected_bleu_score, bpe_bleu_score)
-    self.assertAlmostEqual(expected_rouge_score, bpe_rouge_score)
+    # expected_bleu_score = 22.5855084573
+    # expected_rouge_score = 50.8429782599
 
-    spm_bleu_score = evaluation_utils.evaluate(
-        ref_spm, output, "bleu", "spm")
-    spm_rouge_score = evaluation_utils.evaluate(
-        ref_spm, output, "rouge", "spm")
+    # bpe_bleu_score = evaluation_utils.evaluate(
+        # ref_bpe, output, "bleu", "bpe")
+    # bpe_rouge_score = evaluation_utils.evaluate(
+        # ref_bpe, output, "rouge", "bpe")
 
-    self.assertAlmostEqual(expected_rouge_score, spm_rouge_score)
-    self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
+    # self.assertAlmostEqual(expected_bleu_score, bpe_bleu_score)
+    # self.assertAlmostEqual(expected_rouge_score, bpe_rouge_score)
+
+    # spm_bleu_score = evaluation_utils.evaluate(
+        # ref_spm, output, "bleu", "spm")
+    # spm_rouge_score = evaluation_utils.evaluate(
+        # ref_spm, output, "rouge", "spm")
+
+    # self.assertAlmostEqual(expected_rouge_score, spm_rouge_score)
+    # self.assertAlmostEqual(expected_bleu_score, spm_bleu_score)
 
 #   def testAccuracy(self):
 #     pred_output = "nmt/testdata/pred_output"
