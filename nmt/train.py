@@ -30,7 +30,7 @@ from . import model_helper
 from .utils import misc_utils as utils
 from .utils import nmt_utils
 
-import pdb
+# import pdb
 
 utils.check_tensorflow_version()
 
@@ -397,7 +397,7 @@ def train(hparams, scope=None, target_session=""):
 
     utils.print_out("# Start evaluating saved best models.")
     for metric in hparams.metrics:
-        pdb.set_trace()
+        # pdb.set_trace()
         best_model_dir = getattr(hparams, "best_" + metric + "_dir")
         summary_writer = tf.summary.FileWriter(
             os.path.join(best_model_dir, summary_name), infer_model.graph)

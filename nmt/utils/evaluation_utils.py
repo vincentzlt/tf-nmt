@@ -151,6 +151,9 @@ def _char_bleu(ref_file,
     elif text_format == 'stroke':
         ref_file = _tr_file(ref_file, stroke_dict, 'de-stroke')
         trans_file = _tr_file(trans_file, stroke_dict, 'de-stroke')
+    else:
+        ref_file = _tr_file(ref_file, {}, 'de-space')
+        trans_file = _tr_file(trans_file, {}, 'de-space')
 
     ref_files = [ref_file]
     reference_text = []

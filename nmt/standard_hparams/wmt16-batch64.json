@@ -1,7 +1,6 @@
 {
   "attention": "normed_bahdanau",
   "attention_architecture": "standard",
-  "batch_size": 64,
   "colocate_gradients_with_ops": true,
   "dropout": 0.2,
   "encoder_type": "bi",
