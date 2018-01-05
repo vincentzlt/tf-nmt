@@ -34,7 +34,8 @@ def evaluate(ref_file,
              metric,
              subword_option=None,
              tgt_lang=None,
-             text_format=None):
+             text_format=None,
+             text2char_dict=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
     if metric.lower() == "bleu":
@@ -53,14 +54,16 @@ def evaluate(ref_file,
             ref_file,
             trans_file,
             subword_option=subword_option,
-            text_format=text_format)
+            text_format=text_format,
+            text2char_dict=text2char_dict)
     elif metric.lower()=="kytea_bleu":
         evaluation_score = _kytea_bleu(
             ref_file,
             trans_file,
             subword_option=subword_option,
             tgt_lang=tgt_lang,
-            text_format=text_format)
+            text_format=text_format,
+            text2char_dict=text2char_dict)
     else:
         raise ValueError("Unknown metric %s" % metric)
 
@@ -80,17 +83,18 @@ def _kytea_bleu(ref_file,
                 trans_file,
                 subword_option=None,
                 tgt_lang=None,
-                text_format=None):
+                text_format=None,
+                text2char_dict=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
 
     if text_format == 'comp':
-        ref_file = _tr_file(ref_file, comp_dict, 'de-comp')
-        trans_file = _tr_file(trans_file, comp_dict, 'de-comp')
+        ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
+        trans_file = _tr_file(trans_file, text2char_dict, 'de-comp')
     elif text_format == 'stroke':
-        ref_file = _tr_file(ref_file, stroke_dict, 'de-stroke')
-        trans_file = _tr_file(trans_file, stroke_dict, 'de-stroke')
+        ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
+        trans_file = _tr_file(trans_file, text2char_dict, 'de-stroke')
     else:
         ref_file = _tr_file(ref_file, {}, 'de-space')
         trans_file = _tr_file(trans_file, {}, 'de-space')
@@ -140,17 +144,18 @@ def _kytea_bleu(ref_file,
 def _char_bleu(ref_file,
                trans_file,
                subword_option=None,
-               text_format=None):
+               text_format=None,
+               text2char_dict=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
 
     if text_format == 'comp':
-        ref_file = _tr_file(ref_file, comp_dict, 'de-comp')
-        trans_file = _tr_file(trans_file, comp_dict, 'de-comp')
+        ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
+        trans_file = _tr_file(trans_file, text2char_dict, 'de-comp')
     elif text_format == 'stroke':
-        ref_file = _tr_file(ref_file, stroke_dict, 'de-stroke')
-        trans_file = _tr_file(trans_file, stroke_dict, 'de-stroke')
+        ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
+        trans_file = _tr_file(trans_file, text2char_dict, 'de-stroke')
 
     ref_files = [ref_file]
     reference_text = []

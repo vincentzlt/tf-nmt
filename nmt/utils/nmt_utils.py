@@ -23,6 +23,9 @@ import tensorflow as tf
 
 from ..utils import evaluation_utils
 from ..utils import misc_utils as utils
+from ..utils import comp_dict, stroke_dict
+
+import pdb
 
 __all__ = ["decode_and_evaluate", "get_translation"]
 
@@ -39,7 +42,9 @@ def decode_and_evaluate(name,
                         beam_width,
                         tgt_eos,
                         num_translations_per_input=1,
-                        decode=True):
+                        decode=True,
+                        src_vocab_file=None,
+                        tgt_vocab_file=None):
     """Decode a test set and compute a score according to the evaluation task."""
     # Decode
     if decode:
@@ -82,18 +87,43 @@ def decode_and_evaluate(name,
     evaluation_scores = {}
     if ref_file and tf.gfile.Exists(trans_file):
         for metric in metrics:
+            pdb.set_trace()
+            vocab_all = open(src_vocab_file, 'rt').readlines() + open(
+                tgt_vocab_file, 'rt').readlines()
+            vocab_all=[w.strip() for w in vocab_all]
+            char_comp_dict={comp_dict[w]:w for w in comp_dict}
+            char_stroke_dict={stroke_dict[w]:w for w in stroke_dict}
+            if text_format == 'comp':
+                text2char_dict = {
+                    _to_comp_stroke(w, char_comp_dict): w
+                    for w in vocab_all
+                }
+
+            elif text_format=='stroke':
+                text2char_dict = {
+                    _to_comp_stroke(w, char_stroke_dict): w
+                    for w in vocab_all
+                }
+
             score = evaluation_utils.evaluate(
                 ref_file,
                 trans_file,
                 metric,
                 subword_option=subword_option,
                 tgt_lang=tgt,
-                text_format=text_format)
+                text_format=text_format,
+                text2char_dict=text2char_dict)
             evaluation_scores[metric] = score
             utils.print_out("  %s %s: %.1f" % (metric, name, score))
 
     return evaluation_scores
 
+def _to_comp_stroke(w,trans_dict):
+    assert type(w)==str
+    if w not in ['<unk>','<s>','</s>']:
+        return ''.join(trans_dict[w]  for c in w)
+    else:
+        return w
 
 def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option):
     """Given batch decoding outputs, select a sentence and turn to text."""
