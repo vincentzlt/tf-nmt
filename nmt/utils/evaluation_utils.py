@@ -73,6 +73,12 @@ def _tr_file(fpath, tr_dict, suffix):
         for l in open(fpath, 'rt'):
             fout.write(''.join(tr_dict.get(w,w) for w in l.split())+"\n")
     return new_fpath
+def _clean_file(fpath,subword_option, suffix):
+    new_fpath = fpath + '.' + suffix
+    with open(new_fpath, 'wt') as fout:
+        for l in open(fpath, 'rt'):
+            fout.write(_clean(l,subword_option)+"\n")
+    return new_fpath
 
 
 
@@ -84,6 +90,8 @@ def _kytea_bleu(ref_file,
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
+
+    ref_file=_clean_file(ref_file,subword_option,'de-{}'.format(subword_option))
 
     if text_format == 'comp':
         ref_file = _tr_file(ref_file, comp_dict, 'de-comp')
@@ -144,6 +152,9 @@ def _char_bleu(ref_file,
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
+
+
+    ref_file=_clean_file(ref_file,subword_option,'de-{}'.format(subword_option))
 
     if text_format == 'comp':
         ref_file = _tr_file(ref_file, comp_dict, 'de-comp')
