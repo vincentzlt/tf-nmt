@@ -244,7 +244,7 @@ def train(hparams, scope=None, target_session=""):
     sample_tgt_data = inference.load_data(dev_tgt_file)
 
     summary_name = "train_log"
-    model_dir = os.path.join(hparams.out_dir,'checkpoints')
+    model_dir = os.path.join(hparams.out_dir, 'checkpoints')
 
     # Log and output files
     log_file = os.path.join(out_dir, "log_%d" % time.time())
