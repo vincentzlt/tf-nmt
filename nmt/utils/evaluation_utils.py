@@ -24,18 +24,18 @@ from ..scripts import bleu
 from ..scripts import rouge
 from ..utils import comp_dict,stroke_dict
 
-
+import pdb
 
 __all__ = ["evaluate"]
 
 
 def evaluate(ref_file,
-             trans_file,
-             metric,
-             subword_option=None,
-             tgt_lang=None,
-             text_format=None,
-             text2char_dict=None):
+            trans_file,
+            metric,
+            subword_option=None,
+            tgt_lang=None,
+            text_format=None,
+            text2char_dict=None):
     """Pick a metric and evaluate depending on task."""
     # BLEU scores for translation task
     if metric.lower() == "bleu":
@@ -62,7 +62,6 @@ def evaluate(ref_file,
             trans_file,
             subword_option=subword_option,
             tgt_lang=tgt_lang,
-            text_format=text_format,
             text2char_dict=text2char_dict)
     else:
         raise ValueError("Unknown metric %s" % metric)
@@ -70,11 +69,12 @@ def evaluate(ref_file,
     return evaluation_score
 
 
-def _tr_file(fpath, tr_dict, suffix):
+def _tr_file(fpath,subword_option, tr_dict, suffix):
     new_fpath = fpath + '.' + suffix
     with open(new_fpath, 'wt') as fout:
-        for l in open(fpath, 'rt'):
-            fout.write(''.join(tr_dict.get(w,w) for w in l.split())+"\n")
+        for output in open(fpath, 'rt'):
+            translation=_clean(output, subword_option)
+            fout.write(''.join(tr_dict.get(w,'<unk>') for w in translation.split())+"\n")
     return new_fpath
 
 
@@ -90,14 +90,11 @@ def _kytea_bleu(ref_file,
     smooth = False
 
     if text_format == 'comp':
-        ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
-        trans_file = _tr_file(trans_file, text2char_dict, 'de-comp')
+        if not os.path.exists(os.path.join(ref_file,'de-comp')):
+            ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
     elif text_format == 'stroke':
-        ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
-        trans_file = _tr_file(trans_file, text2char_dict, 'de-stroke')
-    else:
-        ref_file = _tr_file(ref_file, {}, 'de-space')
-        trans_file = _tr_file(trans_file, {}, 'de-space')
+        if not  os.path.exists(os.path.join(ref_file,'de-stroke)):
+            ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
 
     if tgt_lang == 'cn':
         MODEL_FILE = '/home/vincentzlt/kytea/models/msr-0.4.0-1.mod'
@@ -105,15 +102,15 @@ def _kytea_bleu(ref_file,
         MODEL_FILE = '/home/vincentzlt/kytea/models/jp-0.4.7-1.mod'
 
     subprocess.call(
-        'kytea -model {model} < {input} > {output}'.format(
-            model=MODEL_FILE, input=ref_file, output=ref_file + '.kytea'),
+        'kytea -out tok -model {model} < {input} > {output}'.format(
+            model=MODEL_FILE, input=ref_file, output=os.path.join(ref_file , '.kytea')),
         shell=True)
     subprocess.call(
-        'kytea -model {model} < {input} > {output}'.format(
-            model=MODEL_FILE, input=trans_file, output=trans_file + '.kytea'),
+        'kytea -out tok -model {model} < {input} > {output}'.format(
+            model=MODEL_FILE, input=trans_file, output=os.path.join(trans_file ,'.kytea')),
         shell=True)
-    ref_file = ref_file + '.kytea'
-    trans_file = trans_file + '.kytea'
+    ref_file = os.path.join(ref_file , '.kytea')
+    trans_file = os.path.join(trans_file ,'.kytea')
 
     ref_files = [ref_file]
     reference_text = []
@@ -126,14 +123,14 @@ def _kytea_bleu(ref_file,
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = _clean(reference, subword_option)
+            reference = reference.strip()
             reference_list.append(reference.split(" "))
         per_segment_references.append(reference_list)
 
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = _clean(line, subword_option=None)
+            line = line.strip()
             translations.append(line.split(" "))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length
@@ -142,20 +139,20 @@ def _kytea_bleu(ref_file,
     return 100 * bleu_score
 
 def _char_bleu(ref_file,
-               trans_file,
-               subword_option=None,
-               text_format=None,
-               text2char_dict=None):
+            trans_file,
+            subword_option=None,
+            text_format=None,
+            text2char_dict=None):
     """Compute BLEU scores and handling BPE."""
     max_order = 4
     smooth = False
 
     if text_format == 'comp':
-        ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
-        trans_file = _tr_file(trans_file, text2char_dict, 'de-comp')
+        if not os.path.exists(os.path.join(ref_file,'de-comp')):
+            ref_file = _tr_file(ref_file, text2char_dict, 'de-comp')
     elif text_format == 'stroke':
-        ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
-        trans_file = _tr_file(trans_file, text2char_dict, 'de-stroke')
+        if not  os.path.exists(os.path.join(ref_file,'de-stroke)):
+            ref_file = _tr_file(ref_file, text2char_dict, 'de-stroke')
 
     ref_files = [ref_file]
     reference_text = []
@@ -168,16 +165,16 @@ def _char_bleu(ref_file,
     for references in zip(*reference_text):
         reference_list = []
         for reference in references:
-            reference = _clean(reference, subword_option)
-            reference=" ".join(list(''.join(reference.split())))
+            pdb.set_trace()
+            reference=" ".join(list(reference))
             reference_list.append(reference.split(" "))
         per_segment_references.append(reference_list)
 
     translations = []
     with codecs.getreader("utf-8")(tf.gfile.GFile(trans_file, "rb")) as fh:
         for line in fh:
-            line = _clean(line, subword_option=None)
-            line=" ".join(list(''.join(line.split())))
+            line = line.strip()
+            line=" ".join(list(line))
             translations.append(line.split(" "))
 
     # bleu_score, precisions, bp, ratio, translation_length, reference_length

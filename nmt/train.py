@@ -141,12 +141,12 @@ def run_external_eval(infer_model,
 
 
 def run_full_eval(model_dir, infer_model, infer_sess, eval_model, eval_sess,
-                  hparams, summary_writer, sample_src_data, sample_tgt_data):
+                hparams, summary_writer, sample_src_data, sample_tgt_data):
     """Wrapper for running sample_decode, internal_eval and external_eval."""
     run_sample_decode(infer_model, infer_sess, model_dir, hparams,
-                      summary_writer, sample_src_data, sample_tgt_data)
+                    summary_writer, sample_src_data, sample_tgt_data)
     dev_ppl, test_ppl = run_internal_eval(eval_model, eval_sess, model_dir,
-                                          hparams, summary_writer)
+                                        hparams, summary_writer)
     dev_scores, test_scores, global_step = run_external_eval(
         infer_model, infer_sess, model_dir, hparams, summary_writer)
 
@@ -274,7 +274,7 @@ def train(hparams, scope=None, target_session=""):
 
     # First evaluation
     run_full_eval(model_dir, infer_model, infer_sess, eval_model, eval_sess,
-                  hparams, summary_writer, sample_src_data, sample_tgt_data)
+                hparams, summary_writer, sample_src_data, sample_tgt_data)
 
     last_stats_step = global_step
     last_eval_step = global_step
@@ -288,8 +288,8 @@ def train(hparams, scope=None, target_session=""):
     utils.print_out(
         "# Start step %d, lr %g, %s" %
         (global_step,
-         loaded_train_model.learning_rate.eval(session=train_sess),
-         time.ctime()),
+        loaded_train_model.learning_rate.eval(session=train_sess),
+        time.ctime()),
         log_f)
 
     # Initialize all of the iterators
@@ -314,7 +314,7 @@ def train(hparams, scope=None, target_session=""):
                 "# Finished an epoch, step %d. Perform external evaluation" %
                 global_step)
             run_sample_decode(infer_model, infer_sess, model_dir, hparams,
-                              summary_writer, sample_src_data, sample_tgt_data)
+                            summary_writer, sample_src_data, sample_tgt_data)
             dev_scores, test_scores, _ = run_external_eval(
                 infer_model, infer_sess, model_dir, hparams, summary_writer)
             train_sess.run(
@@ -473,8 +473,8 @@ def _sample_decode(model, global_step, sess, hparams, iterator, src_data,
 
 
 def _external_eval(model, global_step, sess, hparams, iterator,
-                   iterator_feed_dict, tgt_file, label, summary_writer,
-                   save_on_best):
+                iterator_feed_dict, tgt_file, label, summary_writer,
+                save_on_best):
     """External evaluation such as BLEU and ROUGE scores."""
     out_dir = hparams.out_dir
     decode = global_step > 0

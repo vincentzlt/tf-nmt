@@ -49,10 +49,10 @@ def add_arguments(parser):
         type=str,
         default="uni",
         help="""\
-      uni | bi | gnmt. For bi, we build num_layers/2 bi-directional layers.For
-      gnmt, we build 1 bi-directional layer, and (num_layers - 1) uni-
-      directional layers.\
-      """)
+        uni | bi | gnmt. For bi, we build num_layers/2 bi-directional layers.For
+        gnmt, we build 1 bi-directional layer, and (num_layers - 1) uni-
+        directional layers.\
+        """)
     parser.add_argument(
         "--residual",
         type="bool",
@@ -79,21 +79,21 @@ def add_arguments(parser):
         type=str,
         default="",
         help="""\
-      luong | scaled_luong | bahdanau | normed_bahdanau or set to "" for no
-      attention\
-      """)
+        luong | scaled_luong | bahdanau | normed_bahdanau or set to "" for no
+        attention\
+        """)
     parser.add_argument(
         "--attention_architecture",
         type=str,
         default="standard",
         help="""\
-      standard | gnmt | gnmt_v2.
-      standard: use top layer to compute attention.
-      gnmt: GNMT style of computing attention, use previous bottom layer to
-          compute attention.
-      gnmt_v2: similar to gnmt, but use current bottom layer to compute
-          attention.\
-      """)
+        standard | gnmt | gnmt_v2.
+        standard: use top layer to compute attention.
+        gnmt: GNMT style of computing attention, use previous bottom layer to
+            compute attention.
+        gnmt_v2: similar to gnmt, but use current bottom layer to compute
+            attention.\
+        """)
     parser.add_argument(
         "--output_attention",
         type="bool",
@@ -101,10 +101,10 @@ def add_arguments(parser):
         const=True,
         default=True,
         help="""\
-      Only used in standard attention_architecture. Whether use attention as
-      the cell output at each timestep.
-      .\
-      """)
+        Only used in standard attention_architecture. Whether use attention as
+        the cell output at each timestep.
+        .\
+        """)
     parser.add_argument(
         "--pass_hidden_state",
         type="bool",
@@ -112,9 +112,9 @@ def add_arguments(parser):
         const=True,
         default=True,
         help="""\
-      Whether to pass encoder's hidden state to decoder when using an attention
-      based model.\
-      """)
+        Whether to pass encoder's hidden state to decoder when using an attention
+        based model.\
+        """)
 
     # optimizer
     parser.add_argument(
@@ -134,21 +134,21 @@ def add_arguments(parser):
         type=str,
         default="t2t",
         help="""\
-      How to warmup learning rates. Options include:
-        t2t: Tensor2Tensor's way, start with lr 100 times smaller, then
-             exponentiate until the specified lr.\
-      """)
+        How to warmup learning rates. Options include:
+            t2t: Tensor2Tensor's way, start with lr 100 times smaller, then
+                exponentiate until the specified lr.\
+        """)
     parser.add_argument(
         "--decay_scheme",
         type=str,
         default="",
         help="""\
-      How we decay learning rate. Options include:
-        luong234: after 2/3 num train steps, we start halving the learning rate
-          for 4 times before finishing.
-        luong10: after 1/2 num train steps, we start halving the learning rate
-          for 10 times before finishing.\
-      """)
+        How we decay learning rate. Options include:
+            luong234: after 2/3 num train steps, we start halving the learning rate
+            for 4 times before finishing.
+            luong10: after 1/2 num train steps, we start halving the learning rate
+            for 10 times before finishing.\
+        """)
 
     parser.add_argument(
         "--num_train_steps",
@@ -162,7 +162,7 @@ def add_arguments(parser):
         const=True,
         default=True,
         help=("Whether try colocating gradients with "
-              "corresponding op"))
+            "corresponding op"))
 
     # initializer
     parser.add_argument(
@@ -175,7 +175,7 @@ def add_arguments(parser):
         type=float,
         default=0.1,
         help=("for uniform init_op, initialize weights "
-              "between [-this, this]."))
+            "between [-this, this]."))
 
     # data
     parser.add_argument(
@@ -206,16 +206,16 @@ def add_arguments(parser):
         type=str,
         default=None,
         help="""\
-      Vocab prefix, expect files with src/tgt suffixes.\
-      """)
+        Vocab prefix, expect files with src/tgt suffixes.\
+        """)
     parser.add_argument(
         "--embed_prefix",
         type=str,
         default=None,
         help="""\
-      Pretrained embedding prefix, expect files with src/tgt suffixes.
-      The embedding files should be Glove formated txt files.\
-      """)
+        Pretrained embedding prefix, expect files with src/tgt suffixes.
+        The embedding files should be Glove formated txt files.\
+        """)
     parser.add_argument(
         "--sos", type=str, default="<s>", help="Start-of-sentence symbol.")
     parser.add_argument(
@@ -227,17 +227,17 @@ def add_arguments(parser):
         const=True,
         default=False,
         help="""\
-      Whether to use the source vocab and embeddings for both source and
-      target.\
-      """)
+        Whether to use the source vocab and embeddings for both source and
+        target.\
+        """)
     parser.add_argument(
         "--check_special_token",
         type="bool",
         default=True,
         help="""\
-                      Whether check special sos, eos, unk tokens exist in the
-                      vocab files.\
-                      """)
+            Whether check special sos, eos, unk tokens exist in the
+            vocab files.\
+            """)
 
     # Sequence lengths
     parser.add_argument(
@@ -260,9 +260,9 @@ def add_arguments(parser):
         type=int,
         default=None,
         help="""\
-      Max length of tgt sequences during inference.  Also use to restrict the
-      maximum decoding length.\
-      """)
+            Max length of tgt sequences during inference.  Also use to restrict the
+            maximum decoding length.\
+            """)
 
     # Default settings works well (rarely need to change)
     parser.add_argument(
@@ -293,7 +293,7 @@ def add_arguments(parser):
         type=int,
         default=100,
         help=("How many training steps to do per stats logging."
-              "Save checkpoint every 10x steps_per_stats"))
+            "Save checkpoint every 10x steps_per_stats"))
     parser.add_argument(
         "--max_train",
         type=int,
@@ -312,8 +312,8 @@ def add_arguments(parser):
         default="",
         choices=["", "bpe", "spm"],
         help="""\
-                      Set to bpe or spm to activate subword desegmentation.\
-                      """)
+            Set to bpe or spm to activate subword desegmentation.\
+            """)
 
     # Text Format
     parser.add_argument(
@@ -322,8 +322,8 @@ def add_arguments(parser):
         default="",
         choices=["", "comp", "stroke"],
         help="""\
-                      Set to comp or stroke to activate character substitution in evaluation.\
-                      """)
+            Set to comp or stroke to activate character substitution in evaluation.\
+            """)
 
     # Misc
     parser.add_argument(
@@ -343,15 +343,15 @@ def add_arguments(parser):
         type=str,
         default="bleu",
         help=("Comma-separated list of evaluations "
-              "metrics (bleu,rouge,accuracy,char_bleu,kytea_bleu)"))
+            "metrics (bleu,rouge,accuracy,char_bleu,kytea_bleu)"))
     parser.add_argument(
         "--steps_per_external_eval",
         type=int,
         default=None,
         help="""\
-      How many training steps to do per external evaluation.  Automatically set
-      based on data if None.\
-      """)
+        How many training steps to do per external evaluation.  Automatically set
+        based on data if None.\
+        """)
     parser.add_argument(
         "--scope", type=str, default=None, help="scope to put variables under")
     parser.add_argument(
@@ -359,7 +359,7 @@ def add_arguments(parser):
         type=str,
         default=None,
         help=("Path to standard hparams json file that overrides"
-              "hparams values from FLAGS."))
+            "hparams values from FLAGS."))
     parser.add_argument(
         "--random_seed",
         type=int,
@@ -389,7 +389,7 @@ def add_arguments(parser):
         type=str,
         default=None,
         help=("A comma-separated list of sentence indices "
-              "(0-based) to decode."))
+            "(0-based) to decode."))
     parser.add_argument(
         "--infer_batch_size",
         type=int,
@@ -405,16 +405,16 @@ def add_arguments(parser):
         type=str,
         default=None,
         help=("""\
-      Reference file to compute evaluation scores (if provided).\
-      """))
+        Reference file to compute evaluation scores (if provided).\
+        """))
     parser.add_argument(
         "--beam_width",
         type=int,
         default=0,
         help=("""\
-      beam width when using beam search decoder. If 0 (default), use standard
-      decoder with greedy helper.\
-      """))
+        beam width when using beam search decoder. If 0 (default), use standard
+        decoder with greedy helper.\
+        """))
     parser.add_argument(
         "--length_penalty_weight",
         type=float,
@@ -425,9 +425,9 @@ def add_arguments(parser):
         type=int,
         default=1,
         help=("""\
-      Number of translations generated for each sentence. This is only used for
-      inference.\
-      """))
+        Number of translations generated for each sentence. This is only used for
+        inference.\
+        """))
 
     # Job info
     parser.add_argument(
@@ -537,7 +537,7 @@ def extend_hparams(hparams):
             "For bi, num_layers %d should be even" % hparams.num_layers)
     if (hparams.attention_architecture in ["gnmt"] and hparams.num_layers < 2):
         raise ValueError("For gnmt attention architecture, "
-                         "num_layers %d should be >= 2" % hparams.num_layers)
+                        "num_layers %d should be >= 2" % hparams.num_layers)
 
     if hparams.subword_option and hparams.subword_option not in ["spm", "bpe"]:
         raise ValueError("subword option must be either spm, or bpe")
@@ -646,15 +646,15 @@ def ensure_compatible_hparams(hparams, default_hparams, hparams_path):
             if getattr(hparams, key) != default_config[key]:
                 utils.print_out("# Updating hparams.%s: %s -> %s" %
                                 (key, str(getattr(hparams, key)),
-                                 str(default_config[key])))
+                                str(default_config[key])))
                 setattr(hparams, key, default_config[key])
     return hparams
 
 
 def create_or_load_hparams(out_dir,
-                           default_hparams,
-                           hparams_path,
-                           save_hparams=True):
+                            default_hparams,
+                            hparams_path,
+                            save_hparams=True):
     """Create hparams or load hparams from out_dir."""
     hparams = utils.load_hparams(out_dir)
     if not hparams:
@@ -678,7 +678,7 @@ def create_or_load_hparams(out_dir,
 
 
 def run_main(flags, default_hparams, train_fn, inference_fn,
-             target_session=""):
+                target_session=""):
     """Run main."""
     # Job
     jobid = flags.jobid
@@ -717,7 +717,7 @@ def run_main(flags, default_hparams, train_fn, inference_fn,
         if not ckpt:
             ckpt = tf.train.latest_checkpoint(os.path.join(out_dir,"checkpoints"))
         inference_fn(ckpt, flags.inference_input_file, trans_file, hparams,
-                     num_workers, jobid)
+                    num_workers, jobid)
 
         # Evaluation
         ref_file = flags.inference_ref_file

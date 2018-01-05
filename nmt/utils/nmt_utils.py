@@ -93,6 +93,7 @@ def decode_and_evaluate(name,
             vocab_all=[w.strip() for w in vocab_all]
             char_comp_dict={comp_dict[w]:w for w in comp_dict}
             char_stroke_dict={stroke_dict[w]:w for w in stroke_dict}
+
             if text_format == 'comp':
                 text2char_dict = {
                     _to_comp_stroke(w, char_comp_dict): w
@@ -125,7 +126,9 @@ def _to_comp_stroke(w,trans_dict):
     else:
         return w
 
-def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option):
+
+def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option,
+                    text_format):
     """Given batch decoding outputs, select a sentence and turn to text."""
     if tgt_eos: tgt_eos = tgt_eos.encode("utf-8")
     # Select a sentence
@@ -141,5 +144,11 @@ def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option):
         translation = utils.format_spm_text(output)
     else:
         translation = utils.format_text(output)
+
+    if text_format=='comp':
+        translation=''.join(comp_dict.get(s,'<unk>')    for s in translation.split())
+    elif text_format=='stroke':
+        translation = ''.join(
+            stroke_dict.get(s, '<unk>') for s in translation.split())
 
     return translation
