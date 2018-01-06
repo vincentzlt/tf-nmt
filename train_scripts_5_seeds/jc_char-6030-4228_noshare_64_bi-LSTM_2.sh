@@ -17,7 +17,6 @@ mkdir ${MODEL_ROOT}/${MODEL} -p
 
 DATA_ROOT=/clwork/vincentzlt/tf-nmt/data_2
 
-
 if [ ${CORPUS} = char ]; then
 	DATA_PREFIX=${DATA_ROOT}/${CORPUS}
 
@@ -56,9 +55,9 @@ elif [ ${SHARE_VOCAB} = true ]; then
 fi
 
 if [ ${MODEL_ARCHITECTURE} = LSTM ]; then
-    HPARAM_PATH=./LSTM.json
+	HPARAM_PATH=${NMT_ROOT}/train_scripts_5_seeds/LSTM.json
 elif [ ${MODEL_ARCHITECTURE} = GNMT ]; then
-    HPARAM_PATH=./GNMT.json
+	HPARAM_PATH=${NMT_ROOT}/train_scripts_5_seeds/GNMT.json
 fi
 
 CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
@@ -74,5 +73,5 @@ CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
 	--test_prefix=${DATA_PREFIX}/test \
 	--out_dir=${MODEL_ROOT}/${MODEL} \
 	--hparams_path=${HPARAM_PATH} \
-    --random_seed=${RAMDOM_SEED} \
+	--random_seed=${RAMDOM_SEED} \
 	--override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")
