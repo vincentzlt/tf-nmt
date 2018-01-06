@@ -77,6 +77,6 @@ CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
 	--hparams_path=${HPARAM_PATH} \
 	--random_seed=${RANDOM_SEED} \
 	--batch_size=$((${BATCH_SIZE} * ${BATCH_SIZE_COEFFICIENT})) \
-	--num_train_steps=$((340000/${BATCH_SIZE_COEFFICIENT}))
---steps_per_stats=$((100/${BATCH_SIZE_COEFFICIENT}))
---override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")
+	--num_train_steps=$((340000/${BATCH_SIZE_COEFFICIENT})) \
+	--steps_per_stats=$((100/${BATCH_SIZE_COEFFICIENT})) \
+	--override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")
