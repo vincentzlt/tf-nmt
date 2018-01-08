@@ -1,0 +1,31 @@
+{
+    "attention": "normed_bahdanau",
+    "attention_architecture": "standard",
+    "colocate_gradients_with_ops": true,
+    "dropout": 0.2,
+    "encoder_type": "bi",
+    "eos": "</s>",
+    "forget_bias": 1.0,
+    "infer_batch_size": 32,
+    "init_weight": 0.1,
+    "learning_rate": 1.0,
+    "max_gradient_norm": 5.0,
+    "metrics": [
+        "char_bleu",
+        "kytea_bleu"
+    ],
+    "num_buckets": 5,
+    "num_layers": 2,
+    "decay_scheme": "luong10",
+    "num_units": 512,
+    "optimizer": "sgd",
+    "residual": false,
+    "share_vocab": false,
+    "sos": "<s>",
+    "src_max_len_infer": null,
+    "steps_per_external_eval": null,
+    "tgt_max_len_infer": null,
+    "time_major": true,
+    "unit_type": "lstm",
+    "beam_width": 10
+}
