@@ -320,7 +320,7 @@ def add_arguments(parser):
         "--text_format",
         type=str,
         default="",
-        choices=["", "comp", "stroke"],
+        choices=["char", "comp", "stroke"],
         help="""\
             Set to comp or stroke to activate character substitution in evaluation.\
             """)

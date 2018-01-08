@@ -1,11 +1,13 @@
 MODEL=jc_comp-bpe-2000_noshare_64_bi-LSTM_2
 CORPUS=comp # ('char','subword','mecab-jieba','comp','stroke','mecab-jieba_comp')
 SUBWORD_OPTION=
-TEXT_FORMAT=char
+TEXT_FORMAT=comp
 MODEL_ARCHITECTURE=LSTM
 SHARE_VOCAB=false
-RANDOM_SEED=28395
-CUDA_VISIBLE_DEVICES=3
+RANDOM_SEED=11377
+CUDA_VISIBLE_DEVICES=6
+BATCH_SIZE=128
+BATCH_SIZE_COEFFICIENT=10
 
 NMT_ROOT=/clwork/vincentzlt/tf-nmt
 cd ${NMT_ROOT}
@@ -74,4 +76,7 @@ CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
 	--out_dir=${MODEL_ROOT}/${MODEL} \
 	--hparams_path=${HPARAM_PATH} \
 	--random_seed=${RANDOM_SEED} \
+	--batch_size=$((${BATCH_SIZE} * ${BATCH_SIZE_COEFFICIENT})) \
+	--num_train_steps=$((340000/${BATCH_SIZE_COEFFICIENT})) \
+	--steps_per_stats=$((100/${BATCH_SIZE_COEFFICIENT})) \
 	--override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")

@@ -30,7 +30,7 @@ from . import model_helper
 from .utils import misc_utils as utils
 from .utils import nmt_utils
 
-import pdb
+# import pdb
 
 utils.check_tensorflow_version()
 
@@ -397,7 +397,7 @@ def train(hparams, scope=None, target_session=""):
 
     utils.print_out("# Start evaluating saved best models.")
     for metric in hparams.metrics:
-        pdb.set_trace()
+        # pdb.set_trace()
         best_model_dir = getattr(hparams, "best_" + metric + "_dir")
         summary_writer = tf.summary.FileWriter(
             os.path.join(best_model_dir, summary_name), infer_model.graph)
@@ -462,10 +462,11 @@ def _sample_decode(model, global_step, sess, hparams, iterator, src_data,
         nmt_outputs,
         sent_id=0,
         tgt_eos=hparams.eos,
-        subword_option=hparams.subword_option)
+        subword_option=hparams.subword_option,
+    text_format=hparams.text_format)
     utils.print_out("    src: " + src_data[decode_id])
     utils.print_out("    ref: " + tgt_data[decode_id])
-    utils.print_out("    nmt: " + translation.decode())
+    utils.print_out("    nmt: " + translation)
 
     # Summary
     if attention_summary is not None:

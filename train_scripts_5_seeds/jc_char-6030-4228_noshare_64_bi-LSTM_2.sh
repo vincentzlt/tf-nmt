@@ -4,8 +4,10 @@ SUBWORD_OPTION=
 TEXT_FORMAT=char
 MODEL_ARCHITECTURE=LSTM
 SHARE_VOCAB=false
-RAMDOM_SEED=50507
+RANDOM_SEED=4267
 CUDA_VISIBLE_DEVICES=3
+BATCH_SIZE=128
+BATCH_SIZE_COEFFICIENT=4
 
 NMT_ROOT=/clwork/vincentzlt/tf-nmt
 cd ${NMT_ROOT}
@@ -20,7 +22,7 @@ DATA_ROOT=/clwork/vincentzlt/tf-nmt/data_2
 if [ ${CORPUS} = char ]; then
 	DATA_PREFIX=${DATA_ROOT}/${CORPUS}
 
-elif [ /${CORPUS} = subword ]; then
+elif [ ${CORPUS} = subword ]; then
 	SUBWORD_TYPE=bpe        # ('bpe','spm')
 	SUBWORD_VOCAB_SIZE=4000 # (4000 8000 16000 32000 64000)
 	DATA_PREFIX=${DATA_ROOT}/${CORPUS}/${SUBWORD_TYPE}/${SUBWORD_VOCAB_SIZE}
@@ -73,5 +75,8 @@ CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
 	--test_prefix=${DATA_PREFIX}/test \
 	--out_dir=${MODEL_ROOT}/${MODEL} \
 	--hparams_path=${HPARAM_PATH} \
-	--random_seed=${RAMDOM_SEED} \
+	--random_seed=${RANDOM_SEED} \
+	--batch_size=$((${BATCH_SIZE} * ${BATCH_SIZE_COEFFICIENT})) \
+	--num_train_steps=$((340000/${BATCH_SIZE_COEFFICIENT})) \
+	--steps_per_stats=$((100/${BATCH_SIZE_COEFFICIENT})) \
 	--override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")

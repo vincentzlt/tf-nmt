@@ -4,8 +4,10 @@ SUBWORD_OPTION=
 TEXT_FORMAT=char
 MODEL_ARCHITECTURE=LSTM
 SHARE_VOCAB=false
-RANDOM_SEED=10328
-CUDA_VISIBLE_DEVICES=3
+RANDOM_SEED=12093
+CUDA_VISIBLE_DEVICES=7
+BATCH_SIZE=128
+BATCH_SIZE_COEFFICIENT=5
 
 NMT_ROOT=/clwork/vincentzlt/tf-nmt
 cd ${NMT_ROOT}
@@ -74,4 +76,7 @@ CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} python3 -m nmt.nmt \
 	--out_dir=${MODEL_ROOT}/${MODEL} \
 	--hparams_path=${HPARAM_PATH} \
 	--random_seed=${RANDOM_SEED} \
+	--batch_size=$((${BATCH_SIZE} * ${BATCH_SIZE_COEFFICIENT})) \
+	--num_train_steps=$((340000/${BATCH_SIZE_COEFFICIENT})) \
+	--steps_per_stats=$((100/${BATCH_SIZE_COEFFICIENT})) \
 	--override_loaded_hparams | tee ${MODEL_ROOT}/${MODEL}/log_$(date "+%Y-%m-%d_%H_%M_%S")

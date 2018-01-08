@@ -25,7 +25,7 @@ from ..utils import evaluation_utils
 from ..utils import misc_utils as utils
 from ..utils import comp_dict, stroke_dict
 
-import pdb
+# import pdb
 
 __all__ = ["decode_and_evaluate", "get_translation"]
 
@@ -73,9 +73,10 @@ def decode_and_evaluate(name,
                                 nmt_outputs[beam_id],
                                 sent_id,
                                 tgt_eos=tgt_eos,
-                                subword_option=subword_option)
+                                subword_option=subword_option,
+                                text_format=text_format)
                             trans_f.write(
-                                (translation + b"\n").decode("utf-8"))
+                                (translation + "\n"))
                 except tf.errors.OutOfRangeError:
                     utils.print_time(
                         "  done, num sentences %d, num translations per input %d"
@@ -87,24 +88,28 @@ def decode_and_evaluate(name,
     evaluation_scores = {}
     if ref_file and tf.gfile.Exists(trans_file):
         for metric in metrics:
-            pdb.set_trace()
+            # pdb.set_trace()
             vocab_all = open(src_vocab_file, 'rt').readlines() + open(
                 tgt_vocab_file, 'rt').readlines()
             vocab_all=[w.strip() for w in vocab_all]
-            char_comp_dict={comp_dict[w]:w for w in comp_dict}
-            char_stroke_dict={stroke_dict[w]:w for w in stroke_dict}
+           #  char_comp_dict={comp_dict[w]:w for w in comp_dict}
+            # char_stroke_dict={stroke_dict[w]:w for w in stroke_dict}
 
             if text_format == 'comp':
-                text2char_dict = {
-                    _to_comp_stroke(w, char_comp_dict): w
-                    for w in vocab_all
-                }
+                text2char_dict=comp_dict
+#                 text2char_dict = {
+                    # _to_comp_stroke(w, char_comp_dict): w
+                    # for w in vocab_all
+                # }
 
             elif text_format=='stroke':
-                text2char_dict = {
-                    _to_comp_stroke(w, char_stroke_dict): w
-                    for w in vocab_all
-                }
+                text2char_dict=stroke_dict
+#                 text2char_dict = {
+                    # _to_comp_stroke(w, char_stroke_dict): w
+                    # for w in vocab_all
+                # }
+            elif text_format=='char':
+                text2char_dict = None
 
             score = evaluation_utils.evaluate(
                 ref_file,
@@ -145,10 +150,15 @@ def get_translation(nmt_outputs, sent_id, tgt_eos, subword_option,
     else:
         translation = utils.format_text(output)
 
+    translation=translation.decode()
+
     if text_format=='comp':
+        # pdb.set_trace()
         translation=''.join(comp_dict.get(s,'<unk>')    for s in translation.split())
     elif text_format=='stroke':
         translation = ''.join(
             stroke_dict.get(s, '<unk>') for s in translation.split())
+    elif text_format=='char':
+        translation=''.join(w for w in translation.split())
 
     return translation
